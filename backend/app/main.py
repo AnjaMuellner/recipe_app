@@ -1,0 +1,45 @@
+from contextlib import asynccontextmanager
+from fastapi import FastAPI
+from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.exc import SQLAlchemyError
+
+from backend.app.api.v1 import auth, recipes
+from backend.app.db.init_db import init_db
+
+# Initialize the database
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    print("Initializing database...")
+    init_db()
+    yield
+    print("Shutting down...")
+
+app = FastAPI(lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://127.0.0.1:3000", "http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.exception_handler(SQLAlchemyError)
+def sqlalchemy_exception_handler(exc):
+    """
+    Handle SQLAlchemy exceptions and return a JSON response.
+
+    Args:
+        exc (SQLAlchemyError): The exception raised by SQLAlchemy.
+    """
+    return JSONResponse(
+        status_code=500,
+        content={"detail": str(exc)},
+    )
+
+@app.get("/")
+def read_root():
+    return {"message": "Welcome!"}
+
+app.include_router(auth.router, prefix="/auth", tags=["auth"])
