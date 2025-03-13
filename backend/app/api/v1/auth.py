@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException
+import logging
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 from datetime import datetime, timedelta, timezone
@@ -30,9 +31,11 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
     return encoded_jwt
 
 @router.post("/register", response_model=UserResponse)
-def register_user(user: UserCreate, db: Session = Depends(get_db)):
+async def register_user(request: Request, user: UserCreate, db: Session = Depends(get_db)):
+    logging.info(f"Received payload: {await request.json()}")
     db_user = db.query(User).filter(User.email == user.email).first()
     if db_user:
+        logging.error("Email already registered")
         raise HTTPException(status_code=400, detail="Email already registered")
     
     hashed_password = get_password_hash(user.password)
@@ -44,6 +47,7 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
+    logging.info(f"User registered successfully: {user.username}")
     return new_user
 
 @router.post("/login")

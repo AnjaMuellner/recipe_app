@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.exc import SQLAlchemyError
 
-from backend.app.api.v1 import auth, recipes
+from backend.app.api.v1.auth import router as auth_router
 from backend.app.db.init_db import init_db
 
 # Initialize the database
@@ -42,4 +42,4 @@ def sqlalchemy_exception_handler(exc):
 def read_root():
     return {"message": "Welcome!"}
 
-app.include_router(auth.router, prefix="/auth", tags=["auth"])
+app.include_router(auth_router, prefix="/api/auth", tags=["auth"])

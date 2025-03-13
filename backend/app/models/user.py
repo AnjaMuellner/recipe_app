@@ -9,5 +9,6 @@ class User(Base):
     username = Column(String, unique=True, index=True)
     email = Column(String, unique=True, index=True)
     hashed_password = Column(String)
-    recipes = relationship("Recipe", back_populates="user")
+
+    recipes = relationship("Recipe", back_populates="owner")
     comments = relationship("Comment", back_populates="user")

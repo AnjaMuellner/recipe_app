@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 const RegisterForm = ({ onRegister }) => {
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -16,16 +17,17 @@ const RegisterForm = ({ onRegister }) => {
     }
 
     try {
-      const response = await fetch('/api/auth/register', {
+      const response = await fetch('http://127.0.0.1:8000/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ username, email, password }),
       });
 
       if (!response.ok) {
-        throw new Error('Registration failed');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Registration failed');
       }
 
       const data = await response.json();
@@ -39,6 +41,13 @@ const RegisterForm = ({ onRegister }) => {
     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <h1 style={{ marginBottom: '20px' }}>Register</h1>
       {error && <p style={{ color: 'red', marginBottom: '10px' }}>{error}</p>}
+      <input
+        type="text"
+        placeholder="Username"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        style={{ marginBottom: '10px', padding: '10px', width: '300px' }}
+      />
       <input
         type="email"
         placeholder="Email"
