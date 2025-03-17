@@ -4,7 +4,9 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.exc import SQLAlchemyError
 
+from backend.app.api.v1 import auth, users
 from backend.app.api.v1.auth import router as auth_router
+from backend.app.api.v1.recipes import router as recipes_router
 from backend.app.db.init_db import init_db
 
 # Initialize the database
@@ -26,11 +28,12 @@ app.add_middleware(
 )
 
 @app.exception_handler(SQLAlchemyError)
-def sqlalchemy_exception_handler(exc):
+async def sqlalchemy_exception_handler(request, exc):
     """
     Handle SQLAlchemy exceptions and return a JSON response.
 
     Args:
+        request: The request that caused the exception.
         exc (SQLAlchemyError): The exception raised by SQLAlchemy.
     """
     return JSONResponse(
@@ -42,4 +45,10 @@ def sqlalchemy_exception_handler(exc):
 def read_root():
     return {"message": "Welcome!"}
 
+@app.get("/test-cors")
+def test_cors():
+    return {"message": "CORS is working!"}
+
 app.include_router(auth_router, prefix="/api/auth", tags=["auth"])
+app.include_router(users.router, prefix="/api", tags=["users"])
+app.include_router(recipes_router, prefix="/api")

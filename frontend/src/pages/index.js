@@ -14,11 +14,14 @@ export default function Home() {
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', textAlign: 'center' }}>
       <h1 style={{ marginBottom: '20px' }}>{message}</h1>
       <div style={{ display: 'flex', gap: '10px' }}>
-        <Link href="/LoginPage" legacyBehavior>
+        <Link href="/login" legacyBehavior>
           <button className="button">Login</button>
         </Link>
-        <Link href="/RegisterPage" legacyBehavior>
+        <Link href="/register" legacyBehavior>
           <button className="button">Register</button>
+        </Link>
+        <Link href="/overview" legacyBehavior>
+          <button className="button">Overview</button>
         </Link>
       </div>
     </div>

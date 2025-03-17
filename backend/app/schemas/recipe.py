@@ -1,25 +1,47 @@
 from pydantic import BaseModel
 from typing import List, Optional, TYPE_CHECKING
-import datetime
-
-if TYPE_CHECKING:
-    from .comment import Comment
+from datetime import datetime
+from .category import Category
+from .shared_recipe import SharedRecipe
+from .cookbook import CookbookRecipe
+from .user import User
 
 class RecipeBase(BaseModel):
     title: str
-    ingredients: List[str]
-    instructions: str
+    ingredients: dict
+    servings: Optional[int] = None
+    servings_unit: Optional[str] = None
+    special_equipment: Optional[dict] = None
+    instructions: dict
+    thumbnail_url: Optional[str] = None
+    images_url: Optional[dict] = None
+    source: Optional[str] = None
+    prep_time: Optional[int] = None
+    cook_time: Optional[int] = None
+    waiting_time: Optional[int] = None
+    total_time: Optional[int] = None
 
 class RecipeCreate(RecipeBase):
     pass
 
 class Recipe(RecipeBase):
     id: int
-    user_id: int
-    comments: List['Comment'] = []
-    added_at: datetime.datetime
-    last_cooked_at: Optional[datetime.datetime] = None
-    changed_at: datetime.datetime
+    added_at: datetime
+    changed_at: datetime
+    owner_id: int
+    original_id: Optional[int] = None
+    owner: User
+    original: Optional['Recipe'] = None
+    copies: List['Recipe'] = []
+    categories: List[Category] = []
+    shared_recipes: List[SharedRecipe] = []
+    cookbook_recipes: List[CookbookRecipe] = []
 
     class Config:
         orm_mode: True
+
+class RecipeResponse(Recipe):
+    owner: User
+    categories: List[Category]
+    shared_recipes: List[SharedRecipe]
+    cookbook_recipes: List[CookbookRecipe]

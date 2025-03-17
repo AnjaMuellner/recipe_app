@@ -6,8 +6,9 @@ class CategoryBase(BaseModel):
 class CategoryCreate(CategoryBase):
     pass
 
-class Category(CategoryBase):
+class Category(BaseModel):
     id: int
+    name: str
 
     class Config:
         orm_mode: True

@@ -8,8 +8,8 @@ export default function LoginPage() {
     // Store the token in local storage
     localStorage.setItem('token', token);
 
-    // Redirect to the home page
-    router.push('/');
+    // Redirect to the recipes page
+    router.push('/recipes');
   };
 
   return (

@@ -4,6 +4,10 @@ from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 from backend.app.models import User
 from backend.app.db import get_db
@@ -13,7 +17,7 @@ router = APIRouter()
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-SECRET_KEY = "your_secret_key"
+SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
@@ -33,31 +37,44 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
 @router.post("/register", response_model=UserResponse)
 async def register_user(request: Request, user: UserCreate, db: Session = Depends(get_db)):
     logging.info(f"Received payload: {await request.json()}")
-    db_user = db.query(User).filter(User.email == user.email).first()
-    if db_user:
-        logging.error("Email already registered")
-        raise HTTPException(status_code=400, detail="Email already registered")
-    
-    hashed_password = get_password_hash(user.password)
-    new_user = User(
-        username=user.username,
-        email=user.email,
-        hashed_password=hashed_password
-    )
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
-    logging.info(f"User registered successfully: {user.username}")
-    return new_user
+    try:
+        db_user = db.query(User).filter(User.email == user.email).first()
+        if db_user:
+            logging.error("Email already registered")
+            raise HTTPException(status_code=400, detail="Email already registered")
+        
+        hashed_password = get_password_hash(user.password)
+        new_user = User(
+            username=user.username,
+            email=user.email,
+            hashed_password=hashed_password
+        )
+        db.add(new_user)
+        db.commit()
+        db.refresh(new_user)
+        logging.info(f"User registered successfully: {user.username}")
+        return new_user
+    except Exception as e:
+        logging.error(f"Error during registration: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
+from backend.app.schemas import UserCreate, UserResponse, UserLogin
 
 @router.post("/login")
-def login_user(user: UserCreate, db: Session = Depends(get_db)):
+def login_user(user: UserLogin, db: Session = Depends(get_db)):
+    logging.info(f"Login attempt for email: {user.email}")
     db_user = db.query(User).filter(User.email == user.email).first()
-    if not db_user or not pwd_context.verify(user.password, db_user.hashed_password):
+    if not db_user:
+        logging.error("User not found")
+        raise HTTPException(status_code=400, detail="Invalid credentials")
+    
+    if not pwd_context.verify(user.password, db_user.hashed_password):
+        logging.error("Invalid password")
         raise HTTPException(status_code=400, detail="Invalid credentials")
     
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": db_user.email}, expires_delta=access_token_expires
     )
+    logging.info(f"User {user.email} logged in successfully")
     return {"access_token": access_token, "token_type": "bearer"}

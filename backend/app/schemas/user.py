@@ -1,27 +1,27 @@
 from pydantic import BaseModel, EmailStr
-from typing import List, Optional, TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from .recipe import Recipe
-    from .comment import Comment
+from typing import List, TYPE_CHECKING
 
 class UserCreate(BaseModel):
     username: str
     email: EmailStr
     password: str
 
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
 class User(BaseModel):
     id: int
-    recipes: List['Recipe'] = []
-    comments: List['Comment'] = []
+    username: str
+    email: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class UserResponse(BaseModel):
     id: int
     username: str
-    email: EmailStr
+    email: str
 
     class Config:
-        orm_mode = True
+        orm_mode: True

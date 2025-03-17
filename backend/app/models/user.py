@@ -1,6 +1,13 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Table, ForeignKey
 from sqlalchemy.orm import relationship
 from backend.app.db.base_class import Base
+
+cookbook_users = Table(
+    "cookbook_users",
+    Base.metadata,
+    Column("user_id", Integer, ForeignKey("users.id"), primary_key=True),
+    Column("cookbook_id", Integer, ForeignKey("cookbooks.id"), primary_key=True),
+)
 
 class User(Base):
     __tablename__ = "users"
@@ -11,4 +18,6 @@ class User(Base):
     hashed_password = Column(String)
 
     recipes = relationship("Recipe", back_populates="owner")
-    comments = relationship("Comment", back_populates="user")
+    shared_recipes = relationship("SharedRecipe", back_populates="user")
+    cookbooks = relationship("Cookbook", secondary=cookbook_users, back_populates="members")
+    feedback = relationship("CookbookRecipeFeedback", back_populates="user")

@@ -1,0 +1,11 @@
+[
+    {
+      "id": 1,
+      "default_translation": "Potato",
+      "translations": {
+        "en": "Potato",
+        "de": "Kartoffel",
+        "fr": "Pomme de terre"
+      }
+    }
+  ]

@@ -5,3 +5,5 @@ __pycache__/
 node_modules/
 venv/
 .next/
+create_db.py
+testmodels.py

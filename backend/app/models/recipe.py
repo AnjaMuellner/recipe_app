@@ -1,27 +1,50 @@
-from sqlalchemy import JSON, Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import JSON, Column, Integer, String, DateTime, ForeignKey, Table, Enum
 from sqlalchemy.orm import relationship
-import datetime
+from datetime import datetime
 from backend.app.db.base_class import Base
+import enum
+
+class Unit(enum.Enum):
+    NUMBER = "number"
+    SPRINGFORM = "springform"
+    BAKING_TRAY = "baking tray"
+
+recipe_categories = Table(
+    "recipe_categories",
+    Base.metadata,
+    Column("recipe_id", Integer, ForeignKey("recipes.id"), primary_key=True),
+    Column("category_id", Integer, ForeignKey("categories.id"), primary_key=True),
+)
 
 class Recipe(Base):
     __tablename__ = "recipes"
 
     id = Column(Integer, primary_key=True, index=True)
-    title = Column(String, index=True)
-    ingredients = Column(JSON, index=True)
-    instructions = Column(String, index=True)
-    thumbnail_url = Column(String, index=True)
-    images_url = Column(String, index=True)
-    prep_time = Column(Integer, index=True)
-    cook_time = Column(Integer, index=True)
-    waiting_time = Column(Integer, index=True)
-    servings = Column(Integer, index=True)
-    added_at = Column(DateTime, index=True)
-    last_cooked_at = Column(DateTime, index=True)
-    changed_at = Column(DateTime, default=datetime.datetime.utcnow, index=True)
-    source = Column(String, index=True)
-    special_equipment = Column(String, index=True)
-    owner_id = Column(Integer, ForeignKey("users.id"))
-    category_id = Column(Integer, ForeignKey("categories.id"), index=True)
-    comments = relationship("Comment", back_populates="recipe")
+    title = Column(String(255), nullable=False, index=True)
+    ingredients = Column(JSON, nullable=False, index=True)
+    servings = Column(Integer, nullable=True, index=True)
+    servings_unit = Column(Enum(Unit), index=True)
+    special_equipment = Column(JSON, nullable=True, index=True)
+    instructions = Column(JSON, nullable=False, index=True)
+
+    thumbnail_url = Column(String(255), nullable=True, index=True)
+    images_url = Column(JSON, nullable=True, index=True)
+    source = Column(String(255), nullable=True, index=True)
+
+    prep_time = Column(Integer, nullable=True, index=True) #In minutes
+    cook_time = Column(Integer, nullable=True, index=True) #In minutes
+    waiting_time = Column(Integer, nullable=True, index=True) #In minutes
+    total_time = Column(Integer, nullable=True, index=True) #In minutes
+
+    added_at = Column(DateTime, default=datetime.utcnow, index=True)
+    changed_at = Column(DateTime, default=datetime.utcnow, index=True)
+
+    owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    original_id = Column(Integer, ForeignKey("recipes.id", ondelete="SET NULL"), nullable=True) #If Copy of another recipe
+
     owner = relationship("User", back_populates="recipes")
+    original = relationship("Recipe", remote_side=[id], back_populates="copies")
+    copies = relationship("Recipe", back_populates="original")
+    categories = relationship("Category", secondary=recipe_categories, back_populates="recipes")
+    shared_recipes = relationship("SharedRecipe", back_populates="recipe")
+    cookbook_recipes = relationship("CookbookRecipe", back_populates="recipe")
