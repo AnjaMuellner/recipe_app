@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 const RegisterForm = ({ onRegister }) => {
   const [username, setUsername] = useState('');
@@ -6,6 +8,8 @@ const RegisterForm = ({ onRegister }) => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -46,29 +50,65 @@ const RegisterForm = ({ onRegister }) => {
         placeholder="Username"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
-        style={{ marginBottom: '10px', padding: '10px', width: '300px' }}
+        style={{ marginBottom: '10px', padding: '10px', width: '300px', boxSizing: 'border-box' }}
       />
       <input
         type="email"
         placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        style={{ marginBottom: '10px', padding: '10px', width: '300px' }}
+        style={{ marginBottom: '10px', padding: '10px', width: '300px', boxSizing: 'border-box' }}
       />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        style={{ marginBottom: '10px', padding: '10px', width: '300px' }}
-      />
-      <input
-        type="password"
-        placeholder="Confirm Password"
-        value={confirmPassword}
-        onChange={(e) => setConfirmPassword(e.target.value)}
-        style={{ marginBottom: '20px', padding: '10px', width: '300px' }}
-      />
+      <div style={{ position: 'relative', marginBottom: '10px', width: '300px' }}>
+        <input
+          type={showPassword ? 'text' : 'password'}
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          style={{ padding: '10px', width: '100%', boxSizing: 'border-box' }}
+        />
+        <button
+          type="button"
+          onClick={() => setShowPassword(!showPassword)}
+          style={{
+            position: 'absolute',
+            right: '10px',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            padding: '0',
+          }}
+        >
+          <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+        </button>
+      </div>
+      <div style={{ position: 'relative', marginBottom: '20px', width: '300px' }}>
+        <input
+          type={showConfirmPassword ? 'text' : 'password'}
+          placeholder="Confirm Password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          style={{ padding: '10px', width: '100%', boxSizing: 'border-box' }}
+        />
+        <button
+          type="button"
+          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+          style={{
+            position: 'absolute',
+            right: '10px',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            padding: '0',
+          }}
+        >
+          <FontAwesomeIcon icon={showConfirmPassword ? faEyeSlash : faEye} />
+        </button>
+      </div>
       <button className='button'>Register</button>
     </form>
   );

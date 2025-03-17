@@ -7,6 +7,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from backend.app.api.v1 import auth, users
 from backend.app.api.v1.auth import router as auth_router
 from backend.app.api.v1.recipes import router as recipes_router
+from backend.app.api.v1.ingredients import router as ingredients_router
 from backend.app.db.init_db import init_db
 
 # Initialize the database
@@ -51,4 +52,5 @@ def test_cors():
 
 app.include_router(auth_router, prefix="/api/auth", tags=["auth"])
 app.include_router(users.router, prefix="/api", tags=["users"])
-app.include_router(recipes_router, prefix="/api")
+app.include_router(recipes_router, prefix="/api", tags=["recipes"])
+app.include_router(ingredients_router, prefix="/api", tags=["ingredients"])

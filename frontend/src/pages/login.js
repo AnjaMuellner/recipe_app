@@ -9,7 +9,7 @@ export default function LoginPage() {
     localStorage.setItem('token', token);
 
     // Redirect to the recipes page
-    router.push('/recipes');
+    router.push('/dashboard');
   };
 
   return (

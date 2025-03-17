@@ -62,8 +62,14 @@ from backend.app.schemas import UserCreate, UserResponse, UserLogin
 
 @router.post("/login")
 def login_user(user: UserLogin, db: Session = Depends(get_db)):
-    logging.info(f"Login attempt for email: {user.email}")
-    db_user = db.query(User).filter(User.email == user.email).first()
+    logging.info(f"Login attempt for identifier: {user.identifier}")
+    
+    # Check if the identifier is an email or username
+    if "@" in user.identifier:
+        db_user = db.query(User).filter(User.email == user.identifier).first()
+    else:
+        db_user = db.query(User).filter(User.username == user.identifier).first()
+    
     if not db_user:
         logging.error("User not found")
         raise HTTPException(status_code=400, detail="Invalid credentials")
@@ -76,5 +82,5 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
     access_token = create_access_token(
         data={"sub": db_user.email}, expires_delta=access_token_expires
     )
-    logging.info(f"User {user.email} logged in successfully")
+    logging.info(f"User {user.identifier} logged in successfully")
     return {"access_token": access_token, "token_type": "bearer"}

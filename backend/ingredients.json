@@ -1,11 +1,29 @@
 [
-    {
-      "id": 1,
-      "default_translation": "Potato",
-      "translations": {
-        "en": "Potato",
-        "de": "Kartoffel",
-        "fr": "Pomme de terre"
-      }
+  {
+    "id": 1,
+    "name": "Potato",
+    "language": "en",
+    "translations": {
+      "de": "Kartoffel",
+      "fr": "Pomme de terre"
     }
-  ]
+  },
+  {
+    "id": 2,
+    "name": "Tomato",
+    "language": "en",
+    "translations": {
+      "es": "Tomate"
+    }
+  },
+  {
+    "id": 3,
+    "name": "Carrot",
+    "language": "en",
+    "translations": {
+      "de": "Karotte",
+      "fr": "Carotte",
+      "es": "Zanahoria"
+    }
+  }
+]

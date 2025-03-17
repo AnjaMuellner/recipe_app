@@ -21,3 +21,4 @@ class User(Base):
     shared_recipes = relationship("SharedRecipe", back_populates="user")
     cookbooks = relationship("Cookbook", secondary=cookbook_users, back_populates="members")
     feedback = relationship("CookbookRecipeFeedback", back_populates="user")
+    ingredients = relationship("Ingredient", back_populates="creator")

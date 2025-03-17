@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 const LoginForm = ({ onLogin }) => {
-  const [email, setEmail] = useState('');
+  const [identifier, setIdentifier] = useState(''); // Changed from email to identifier
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -15,7 +18,7 @@ const LoginForm = ({ onLogin }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ identifier, password }), // Changed from email to identifier
       });
 
       if (!response.ok) {
@@ -34,19 +37,37 @@ const LoginForm = ({ onLogin }) => {
       <h1 style={{ marginBottom: '20px' }}>Login</h1>
       {error && <p style={{ color: 'red', marginBottom: '10px' }}>{error}</p>}
       <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        style={{ marginBottom: '10px', padding: '10px', width: '300px' }}
+        type="text"
+        placeholder="Email or Username"
+        value={identifier}
+        onChange={(e) => setIdentifier(e.target.value)} // Changed from setEmail to setIdentifier
+        style={{ marginBottom: '10px', padding: '10px', width: '300px', boxSizing: 'border-box' }} // Added boxSizing
       />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        style={{ marginBottom: '20px', padding: '10px', width: '300px' }}
-      />
+      <div style={{ position: 'relative', marginBottom: '20px', width: '300px' }}>
+        <input
+          type={showPassword ? 'text' : 'password'}
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          style={{ padding: '10px', width: '100%', boxSizing: 'border-box' }} // Adjusted width to 100%
+        />
+        <button
+          type="button"
+          onClick={() => setShowPassword(!showPassword)}
+          style={{
+            position: 'absolute',
+            right: '10px',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            padding: '0',
+          }}
+        >
+          <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+        </button>
+      </div>
       <button className='button'>Login</button>
     </form>
   );
