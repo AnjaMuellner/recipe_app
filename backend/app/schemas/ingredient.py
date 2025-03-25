@@ -2,8 +2,6 @@ from pydantic import BaseModel
 from typing import List, Optional
 
 class IngredientBase(BaseModel):
-    amount: Optional[float] = None
-    unit: Optional[str] = None
     name: str
     language: str
 
@@ -23,11 +21,18 @@ class IngredientTranslationBase(BaseModel):
     name: str
 
 class IngredientTranslationCreate(IngredientTranslationBase):
-    ingredient_id: int
+    pass
 
 class IngredientTranslation(IngredientTranslationBase):
     id: int
     ingredient_id: int
+
+    class Config:
+        orm_mode: True
+
+class IngredientResponse(IngredientBase):
+    id: int
+    creator_id: int
 
     class Config:
         orm_mode: True

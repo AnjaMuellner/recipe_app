@@ -1,4 +1,5 @@
 from pydantic import BaseModel, EmailStr
+from typing import List, TYPE_CHECKING
 
 class UserCreate(BaseModel):
     username: str
@@ -9,18 +10,18 @@ class UserLogin(BaseModel):
     identifier: str
     password: str
 
-class User(BaseModel):
-    id: int
+class UserBase(BaseModel):
     username: str
     email: str
+
+class User(UserBase):
+    id: int
 
     class Config:
         from_attributes = True
 
-class UserResponse(BaseModel):
+class UserResponse(UserBase):
     id: int
-    username: str
-    email: str
 
     class Config:
         orm_mode: True

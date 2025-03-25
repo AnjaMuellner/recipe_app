@@ -20,9 +20,6 @@ export default function Home() {
         <Link href="/register" legacyBehavior>
           <button className="button">Register</button>
         </Link>
-        <Link href="/overview" legacyBehavior>
-          <button className="button">Overview</button>
-        </Link>
       </div>
     </div>
   );

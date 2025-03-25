@@ -96,6 +96,14 @@
   margin-top: 0;
 }
 
+.popup select {
+  width: calc(100% - 20px);
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
 .popup label {
   display: block;
   margin-bottom: 5px;
@@ -108,6 +116,10 @@
   margin-bottom: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
+}
+
+.popup input[type="checkbox"] {
+  margin-right: 5px;
 }
 
 .popup button {

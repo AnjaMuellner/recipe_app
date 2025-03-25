@@ -4,12 +4,12 @@ from .recipe import Recipe, RecipeCreate, RecipeResponse
 from .category import Category, CategoryCreate
 from .cookbook import Cookbook, CookbookCreate, CookbookRecipe, CookbookRecipeFeedback, CookbookChapter
 from .shared_recipe import SharedRecipe
-from .cookbook_recipe_feedback import CookbookRecipeFeedback
-from .ingredient import Ingredient, IngredientCreate, IngredientTranslationCreate, IngredientTranslation
+from .ingredient import Ingredient, IngredientCreate, IngredientTranslationCreate, IngredientTranslation, IngredientResponse
 
 __all__ = [
-    "User", "UserLogin", "UserCreate", "UserResponse", "Token", "TokenData", "Recipe", "RecipeCreate", "RecipeResponse",
-    "Category", "CategoryCreate", "Cookbook", "CookbookCreate", "CookbookRecipe",
-    "CookbookRecipeFeedback", "CookbookChapter", "SharedRecipe", "CookbookRecipeFeedback",
-    "Ingredient", "IngredientCreate", "IngredientTranslationCreate", "IngredientTranslation"
+    "User", "UserLogin", "UserCreate", "UserResponse", "Token", "TokenData",
+    "Recipe", "RecipeCreate", "RecipeResponse", "Category", "CategoryCreate",
+    "Cookbook", "CookbookCreate", "CookbookRecipe", "CookbookRecipeFeedback", 
+    "CookbookChapter", "SharedRecipe", "Ingredient", "IngredientCreate", 
+    "IngredientTranslationCreate", "IngredientTranslation", "IngredientResponse"
 ]

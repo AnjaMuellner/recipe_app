@@ -8,8 +8,8 @@ from sqlalchemy.orm import Session
 
 load_dotenv()
 
-from backend.app.models import User, Recipe
 from backend.app.db import get_db
+from backend.app.models import User, Recipe as RecipeModel
 from backend.app.schemas import RecipeResponse
 from backend.app.utils import get_current_user
 
@@ -17,7 +17,7 @@ router = APIRouter()
 
 @router.get("/recipes", response_model=List[RecipeResponse])
 def read_recipes(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    recipes = db.query(Recipe).filter(Recipe.owner_id == current_user.id).all()
+    recipes = db.query(RecipeModel).filter(RecipeModel.owner_id == current_user.id).all()
     return recipes
 
 @router.post("/recipes", response_model=RecipeResponse, status_code=status.HTTP_201_CREATED)
@@ -50,7 +50,7 @@ def create_recipe(
                 shutil.copyfileobj(image.file, buffer)
             images_url[f"image_{index}"] = image_path
 
-    db_recipe = Recipe(
+    db_recipe = RecipeModel(
         title=title,
         ingredients=ingredients,
         instructions=instructions,

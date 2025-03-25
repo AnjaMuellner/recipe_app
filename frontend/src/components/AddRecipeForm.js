@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import styles from './AddRecipeForm.module.css';
+import { useIngredients } from '../context/IngredientsContext';
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 import 'react-quill/dist/quill.snow.css';
 
 export default function AddRecipeForm() {
+  const { fetchIngredients } = useIngredients();
   const [newRecipe, setNewRecipe] = useState({
     title: '',
     ingredients: [{ name: '', amount: '', unit: '' }],
@@ -26,6 +28,8 @@ export default function AddRecipeForm() {
   const [ingredientName, setIngredientName] = useState('');
   const [ingredientAmount, setIngredientAmount] = useState('');
   const [ingredientUnit, setIngredientUnit] = useState('');
+  const [existingIngredientId, setExistingIngredientId] = useState('');
+  const [isTranslation, setIsTranslation] = useState(false);
   const [ingredientList, setIngredientList] = useState([]);
   const [filteredIngredients, setFilteredIngredients] = useState([]);
   const [showAddIngredientPopup, setShowAddIngredientPopup] = useState(false);
@@ -135,9 +139,9 @@ export default function AddRecipeForm() {
     formData.append('servings_unit', newRecipe.servings_unit);
     formData.append('special_equipment', newRecipe.special_equipment);
     formData.append('instructions', newRecipe.instructions);
-    formData.append('thumbnail', thumbnailFile); // Append the file
+    formData.append('thumbnail', thumbnailFile);
     imageFiles.forEach((file, index) => {
-      formData.append(`images_url_${index}`, file); // Append each image file
+      formData.append(`images_url_${index}`, file);
     });
     formData.append('source', newRecipe.source);
     formData.append('prep_time', newRecipe.prep_time);
@@ -167,20 +171,29 @@ export default function AddRecipeForm() {
       console.error('No token found');
       return;
     }
-    const response = await fetch('http://127.0.0.1:8000/api/ingredients', {
-      method: 'POST',
+  
+    const url = isTranslation ? `http://127.0.0.1:8000/api/ingredients/${existingIngredientId}/translations` : 'http://127.0.0.1:8000/api/ingredients';
+    const method = 'POST';
+    const body = JSON.stringify({ name: ingredientName, language: newIngredientLanguage });
+  
+    const response = await fetch(url, {
+      method: method,
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
       },
-      body: JSON.stringify({ name: ingredientName, language: newIngredientLanguage })
+      body: body
     });
+  
     if (response.ok) {
       const newIngredient = await response.json();
       setIngredientList([...ingredientList, newIngredient]);
       setShowAddIngredientPopup(false);
       setIngredientName('');
       setNewIngredientLanguage('');
+      setExistingIngredientId('');
+      setIsTranslation(false);
+      fetchIngredients();
     } else {
       console.error('Failed to add new ingredient:', response.statusText);
     }
@@ -258,8 +271,8 @@ export default function AddRecipeForm() {
           onChange={handleInstructionsChange}
           placeholder="Instructions"
           required
-          className={styles.instructionsField} // Apply the CSS class here
-          style={{ color: 'black', backgroundColor: 'white' }} // Inline styles for the editor
+          className={styles.instructionsField}
+          style={{ color: 'black', backgroundColor: 'white' }}
         />
       </div>
       <div className={styles.formGroup}>
@@ -317,28 +330,53 @@ export default function AddRecipeForm() {
       <button type="submit" className="button">Add Recipe</button>
 
       {showAddIngredientPopup && (
-      <div className={styles.popup}>
-        <h3>Add New Ingredient</h3>
-        <label htmlFor="newIngredientName">Ingredient Name</label>
-        <input
-          type="text"
-          id="newIngredientName"
-          value={ingredientName}
-          onChange={(e) => setIngredientName(e.target.value)}
-          placeholder="Ingredient Name"
-        />
-        <label htmlFor="newIngredientLanguage">Language</label>
-        <input
-          type="text"
-          id="newIngredientLanguage"
-          value={newIngredientLanguage}
-          onChange={(e) => setNewIngredientLanguage(e.target.value)}
-          placeholder="Language"
-        />
-        <button type="button" onClick={handleAddNewIngredient}>Add Ingredient</button>
-        <button type="button" onClick={() => setShowAddIngredientPopup(false)}>Cancel</button>
-      </div>
-    )}
+        <div className={styles.popup}>
+          <h3>Add New Ingredient</h3>
+          <label htmlFor="newIngredientName">Ingredient Name <span className={styles.required}>*</span></label>
+          <input
+            type="text"
+            id="newIngredientName"
+            value={ingredientName}
+            onChange={(e) => setIngredientName(e.target.value)}
+            placeholder="Ingredient Name"
+            required
+          />
+          <label htmlFor="newIngredientLanguage">Language <span className={styles.required}>*</span></label>
+          <input
+            type="text"
+            id="newIngredientLanguage"
+            value={newIngredientLanguage}
+            onChange={(e) => setNewIngredientLanguage(e.target.value)}
+            placeholder="Language"
+            required
+          />
+          <label htmlFor="existingIngredient">Existing Ingredient</label>
+          <select
+            id="existingIngredient"
+            value={existingIngredientId}
+            onChange={(e) => setExistingIngredientId(e.target.value)}
+            disabled={!isTranslation}
+            required={isTranslation}
+          >
+            <option value="">Select Ingredient</option>
+            {ingredientList.map((ingredient) => (
+              <option key={ingredient.id} value={ingredient.id}>
+                {ingredient.name}
+              </option>
+            ))}
+          </select>
+          <label>
+            <input
+              type="checkbox"
+              checked={isTranslation}
+              onChange={(e) => setIsTranslation(e.target.checked)}
+            />
+            Is this a translation of an existing ingredient?
+          </label>
+          <button type="button" onClick={handleAddNewIngredient}>Add Ingredient</button>
+          <button type="button" onClick={() => setShowAddIngredientPopup(false)}>Cancel</button>
+        </div>
+      )}
     </form>
   );
 }

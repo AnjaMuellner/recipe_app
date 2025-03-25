@@ -31,8 +31,6 @@ class Recipe(RecipeBase):
     added_at: datetime
     changed_at: datetime
     owner_id: int
-    thumbnail_url: Optional[str] = None
-    images_url: Optional[dict] = None
     original_id: Optional[int] = None
     owner: User
     original: Optional['Recipe'] = None

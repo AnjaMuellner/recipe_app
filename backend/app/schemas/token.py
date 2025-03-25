@@ -4,5 +4,5 @@ class Token(BaseModel):
     access_token: str
     token_type: str
 
-class TokenData(BaseModel):  # Add this class
+class TokenData(BaseModel):
     email: str

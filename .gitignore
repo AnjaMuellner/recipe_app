@@ -7,3 +7,4 @@ venv/
 .next/
 create_db.py
 testmodels.py
+ToDo.txt

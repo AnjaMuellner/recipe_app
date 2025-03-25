@@ -1,12 +1,15 @@
+import logging
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from typing import List
 
 from backend.app.models import Ingredient, IngredientTranslation, User
-from backend.app.schemas import IngredientCreate, Ingredient as IngredientSchema, IngredientTranslationCreate, IngredientTranslation as IngredientTranslationSchema
+from backend.app.schemas import IngredientCreate, Ingredient as IngredientSchema, IngredientTranslationCreate, IngredientTranslation as IngredientTranslationSchema, IngredientResponse
 from backend.app.db import get_db
 from backend.app.utils import load_predefined_ingredients, get_current_user
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 @router.get("/predefined-ingredients")
 def get_predefined_ingredients(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
@@ -33,8 +36,10 @@ def add_translation(ingredient_id: int, translation: IngredientTranslationCreate
     ingredient = db.query(Ingredient).filter(Ingredient.id == ingredient_id).first()
     
     if not ingredient:
+        logger.debug(f"Ingredient with id {ingredient_id} not found in the database.")
         ingredient = next((ing for ing in predefined_ingredients if ing["id"] == ingredient_id), None)
         if not ingredient:
+            logger.debug(f"Ingredient with id {ingredient_id} not found in predefined ingredients.")
             raise HTTPException(status_code=404, detail="Ingredient not found")
 
     db_translation = IngredientTranslation(**translation.dict(), ingredient_id=ingredient_id)

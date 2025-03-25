@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useIngredients } from '../context/IngredientsContext';
 
 export default function RecipesPage() {
+  const { predefinedIngredients, userIngredients } = useIngredients();
   const [recipes, setRecipes] = useState([]);
-  const [predefinedIngredients, setPredefinedIngredients] = useState([]);
-  const [userIngredients, setUserIngredients] = useState([]);
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -18,21 +18,7 @@ export default function RecipesPage() {
       setRecipes(Array.isArray(data) ? data : []);
     };
 
-    const fetchIngredients = async () => {
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://127.0.0.1:8000/api/predefined-ingredients', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      const data = await response.json();
-      console.log('Fetched predefined ingredients:', data.predefined_ingredients); // Add this line
-      setPredefinedIngredients(data.predefined_ingredients || []);
-      setUserIngredients(data.user_ingredients || []);
-    };
-
     fetchRecipes();
-    fetchIngredients();
   }, []);
 
   return (
@@ -50,7 +36,7 @@ export default function RecipesPage() {
       <ul>
         {predefinedIngredients.concat(userIngredients).map((ingredient, index) => (
           <li key={ingredient.id || index}>
-            {ingredient.name} ({ingredient.language}), Translations: {Object.entries(ingredient.translations).map(([lang, translation]) => `${translation} (${lang})`).join(', ')}
+            {ingredient.name} ({ingredient.language}), Translations: {ingredient.translations ? Object.entries(ingredient.translations).map(([lang, translation]) => `${translation} (${lang})`).join(', ') : 'None'}
           </li>
         ))}
       </ul>
