@@ -1,11 +1,12 @@
 import logging
-from fastapi import APIRouter, Depends, HTTPException, Request
-from sqlalchemy.orm import Session
-from passlib.context import CryptContext
-from datetime import datetime, timedelta, timezone
-from jose import JWTError, jwt
-from dotenv import load_dotenv
 import os
+from datetime import timedelta
+
+from dotenv import load_dotenv
+from fastapi import APIRouter, Depends, HTTPException, Request
+from jose import jwt
+from passlib.context import CryptContext
+from sqlalchemy.orm import Session
 
 load_dotenv()
 
@@ -19,18 +20,12 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 def get_password_hash(password):
     return pwd_context.hash(password)
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
-    if expires_delta:
-        expire = datetime.now(timezone.utc) + expires_delta
-    else:
-        expire = datetime.now(timezone.utc) + timedelta(minutes=15)
-    to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
@@ -53,7 +48,9 @@ async def register_user(request: Request, user: UserCreate, db: Session = Depend
         db.commit()
         db.refresh(new_user)
         logging.info(f"User registered successfully: {user.username}")
-        return new_user
+
+        access_token = create_access_token(data={"sub": new_user.email})
+        return {"access_token": access_token, "token_type": "bearer", "user": new_user}
     except Exception as e:
         logging.error(f"Error during registration: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
@@ -78,9 +75,8 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
         logging.error("Invalid password")
         raise HTTPException(status_code=400, detail="Invalid credentials")
     
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": db_user.email}, expires_delta=access_token_expires
+        data={"sub": db_user.email}    
     )
     logging.info(f"User {user.identifier} logged in successfully")
     return {"access_token": access_token, "token_type": "bearer"}

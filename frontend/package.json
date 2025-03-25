@@ -13,7 +13,8 @@
     "@shadcn/ui": "^0.0.4",
     "next": "^15.2.2",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "react-quill": "^2.0.0"
   },
   "devDependencies": {
     "@types/node": "22.13.10",

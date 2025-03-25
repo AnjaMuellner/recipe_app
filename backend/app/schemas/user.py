@@ -1,5 +1,4 @@
 from pydantic import BaseModel, EmailStr
-from typing import List, TYPE_CHECKING
 
 class UserCreate(BaseModel):
     username: str

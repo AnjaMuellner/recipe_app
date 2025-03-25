@@ -7,8 +7,11 @@ export default function RegisterPage() {
   const handleRegister = (data) => {
     console.log('Registration successful:', data);
 
+    // Store the token in local storage
+    localStorage.setItem('token', data.access_token);
+
     // Redirect to the login page
-    router.push('/login');
+    router.push('/dashboard');
   };
 
   return (

@@ -6,7 +6,7 @@ body {
   }
   
   .button {
-    background-color: #cd0c70;
+    background-color: #792ff0;
     border: none;
     color: white;
     padding: 10px 20px;
@@ -20,7 +20,7 @@ body {
   }
   
   .button:hover {
-    background-color: #cd0caa;
+    background-color: #ac2ff0;
   }
 
   .dark-mode {

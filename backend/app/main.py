@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.exc import SQLAlchemyError
 
-from backend.app.api.v1 import auth, users
+from backend.app.api.v1 import users
 from backend.app.api.v1.auth import router as auth_router
 from backend.app.api.v1.recipes import router as recipes_router
 from backend.app.api.v1.ingredients import router as ingredients_router

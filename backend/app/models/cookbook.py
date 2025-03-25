@@ -1,9 +1,8 @@
 from datetime import datetime
 import enum
-from sqlalchemy import JSON, CheckConstraint, Column, DateTime, Enum, Float, ForeignKey, Integer, String, Table, Text, UniqueConstraint
+from sqlalchemy import CheckConstraint, Column, DateTime, Enum, Float, ForeignKey, Integer, String, Table, Text
 from sqlalchemy.orm import relationship
 from backend.app.db.base_class import Base
-from backend.app.models.recipe import recipe_categories
 from backend.app.models.user import cookbook_users
 
 class Cookbook(Base):
