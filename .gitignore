@@ -8,3 +8,4 @@ venv/
 create_db.py
 testmodels.py
 ToDo.txt
+.env.local

@@ -1,0 +1,38 @@
+.form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .heading {
+    margin-bottom: 20px;
+  }
+  
+  .error {
+    color: #eb005e;
+    margin-bottom: 10px;
+  }
+  
+  .input {
+    margin-bottom: 10px;
+    padding: 10px;
+    width: 300px;
+    box-sizing: border-box;
+  }
+  
+  .passwordContainer {
+    position: relative;
+    margin-bottom: 20px;
+    width: 300px;
+  }
+  
+  .toggleButton {
+    position: absolute;
+    right: 10px;
+    top: 40%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }

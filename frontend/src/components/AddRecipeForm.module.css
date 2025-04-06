@@ -33,9 +33,21 @@
   resize: vertical;
 }
 
+.formGroup select {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 100%; /* Ensures it takes the full width of the container */
+  box-sizing: border-box; /* Ensures padding is included in the width */
+}
+.formGroup select option[value=""] {
+  color: #888;
+}
+
 .required {
   color: #5a00eb;
-  margin-left: 5px;
+  margin-left: 2px;
 }
 
 .ingredientInput {
@@ -49,12 +61,18 @@
   flex: 1;
 }
 
-.amountInput {
+.quantityInput {
   width: 70px;
 }
 
 .unitInput {
   width: 100px;
+}
+
+.specialEquipment {
+  resize: none; /* Prevent manual resizing */
+  overflow: hidden; /* Hide scrollbars */
+  transition: height 0.2s ease; /* Smooth height adjustment */
 }
 
 .addButton {
@@ -88,7 +106,7 @@
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   z-index: 1000;
-  width: 280px; /* Adjusted width */
+  width: 280px;
   text-align: center;
 }
 
@@ -111,8 +129,8 @@
 }
 
 .popup input {
-  width: calc(100% - 20px); /* Adjusted width */
-  padding: 8px; /* Adjusted padding */
+  width: calc(100% - 20px);
+  padding: 8px;
   margin-bottom: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -134,7 +152,7 @@
 }
 
 .popup button + button {
-  margin-left: 10px; /* Add space between buttons */
+  margin-left: 10px;
 }
 
 .popup button:hover {

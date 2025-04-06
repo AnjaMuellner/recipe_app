@@ -1,24 +1,26 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { API_BASE_URL } from '../config/apiConfig';
+import styles from './LoginForm.module.css';
 
 const LoginForm = ({ onLogin }) => {
-  const [identifier, setIdentifier] = useState(''); // Changed from email to identifier
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/auth/login', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ identifier, password }), // Changed from email to identifier
+        body: JSON.stringify({ identifier, password }),
       });
 
       if (!response.ok) {
@@ -33,42 +35,33 @@ const LoginForm = ({ onLogin }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <h1 style={{ marginBottom: '20px' }}>Login</h1>
-      {error && <p style={{ color: 'red', marginBottom: '10px' }}>{error}</p>}
+    <form onSubmit={handleSubmit} className={styles.form}>
+      <h1 className={styles.heading}>Login</h1>
+      {error && <p className={styles.error}>{error}</p>}
       <input
         type="text"
         placeholder="Email or Username"
         value={identifier}
-        onChange={(e) => setIdentifier(e.target.value)} // Changed from setEmail to setIdentifier
-        style={{ marginBottom: '10px', padding: '10px', width: '300px', boxSizing: 'border-box' }} // Added boxSizing
+        onChange={(e) => setIdentifier(e.target.value)}
+        className={styles.input}
       />
-      <div style={{ position: 'relative', marginBottom: '20px', width: '300px' }}>
+      <div className={styles.passwordContainer}>
         <input
           type={showPassword ? 'text' : 'password'}
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          style={{ padding: '10px', width: '100%', boxSizing: 'border-box' }} // Adjusted width to 100%
+          className={styles.input}
         />
         <button
           type="button"
           onClick={() => setShowPassword(!showPassword)}
-          style={{
-            position: 'absolute',
-            right: '10px',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            padding: '0',
-          }}
+          className={styles.toggleButton}
         >
           <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
         </button>
       </div>
-      <button className='button'>Login</button>
+      <button className="button">Login</button>
     </form>
   );
 };

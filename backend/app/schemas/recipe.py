@@ -6,20 +6,27 @@ from .category import Category
 from .shared_recipe import SharedRecipe
 from .cookbook import CookbookRecipe
 from .user import User
+from .ingredient import IngredientResponse
+from enum import Enum
+
+class Unit(str, Enum):
+    NUMBER = "number"
+    SPRINGFORM = "springform"
+    BAKING_TRAY = "baking tray"
 
 class RecipeBase(BaseModel):
     title: str
-    ingredients: dict
-    servings: Optional[int] = None
-    servings_unit: Optional[str] = None
-    special_equipment: Optional[dict] = None
-    instructions: dict
+    ingredients: List[IngredientResponse]
+    servings: int
+    servings_unit: Unit
+    special_equipment: Optional[dict] = None  # JSON object from the frontend
+    instructions: str  # JSON object from the frontend
     thumbnail_url: Optional[str] = None
     images_url: Optional[dict] = None
     source: Optional[str] = None
     prep_time: Optional[int] = None
     cook_time: Optional[int] = None
-    waiting_time: Optional[int] = None
+    rest_time: Optional[int] = None
     total_time: Optional[int] = None
 
 class RecipeCreate(RecipeBase):

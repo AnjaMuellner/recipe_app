@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { API_BASE_URL } from '../config/apiConfig';
+import styles from './RegisterForm.module.css';
 
 const RegisterForm = ({ onRegister }) => {
   const [username, setUsername] = useState('');
@@ -21,7 +23,7 @@ const RegisterForm = ({ onRegister }) => {
     }
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/auth/register', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -30,11 +32,15 @@ const RegisterForm = ({ onRegister }) => {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Registration failed');
+        throw new Error('Registration failed');
       }
 
       const data = await response.json();
+
+      // Store the token in local storage
+      localStorage.setItem('token', data.access_token);
+
+      // Redirect to the dashboard or reload the page
       onRegister(data);
     } catch (err) {
       setError(err.message);
@@ -42,74 +48,56 @@ const RegisterForm = ({ onRegister }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <h1 style={{ marginBottom: '20px' }}>Register</h1>
-      {error && <p style={{ color: 'red', marginBottom: '10px' }}>{error}</p>}
+    <form onSubmit={handleSubmit} className={styles.form}>
+      <h1 className={styles.heading}>Register</h1>
+      {error && <p className={styles.error}>{error}</p>}
       <input
         type="text"
         placeholder="Username"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
-        style={{ marginBottom: '10px', padding: '10px', width: '300px', boxSizing: 'border-box' }}
+        className={styles.input}
       />
       <input
         type="email"
         placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        style={{ marginBottom: '10px', padding: '10px', width: '300px', boxSizing: 'border-box' }}
+        className={styles.input}
       />
-      <div style={{ position: 'relative', marginBottom: '10px', width: '300px' }}>
+      <div className={styles.passwordContainer}>
         <input
           type={showPassword ? 'text' : 'password'}
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          style={{ padding: '10px', width: '100%', boxSizing: 'border-box' }}
+          className={styles.input}
         />
         <button
           type="button"
           onClick={() => setShowPassword(!showPassword)}
-          style={{
-            position: 'absolute',
-            right: '10px',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            padding: '0',
-          }}
+          className={styles.toggleButton}
         >
           <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
         </button>
       </div>
-      <div style={{ position: 'relative', marginBottom: '20px', width: '300px' }}>
+      <div className={styles.passwordContainer}>
         <input
           type={showConfirmPassword ? 'text' : 'password'}
           placeholder="Confirm Password"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
-          style={{ padding: '10px', width: '100%', boxSizing: 'border-box' }}
+          className={styles.input}
         />
         <button
           type="button"
           onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-          style={{
-            position: 'absolute',
-            right: '10px',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            padding: '0',
-          }}
+          className={styles.toggleButton}
         >
           <FontAwesomeIcon icon={showConfirmPassword ? faEyeSlash : faEye} />
         </button>
       </div>
-      <button className='button'>Register</button>
+      <button className="button">Register</button>
     </form>
   );
 };

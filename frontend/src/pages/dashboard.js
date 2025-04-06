@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useIngredients } from '../context/IngredientsContext';
+import { API_BASE_URL } from '../config/apiConfig';
 
 export default function RecipesPage() {
   const { predefinedIngredients, userIngredients } = useIngredients();
@@ -9,7 +10,7 @@ export default function RecipesPage() {
   useEffect(() => {
     const fetchRecipes = async () => {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://127.0.0.1:8000/api/recipes', {
+      const response = await fetch(`${API_BASE_URL}/api/recipes`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -20,6 +21,20 @@ export default function RecipesPage() {
 
     fetchRecipes();
   }, []);
+
+  const getTranslations = (ingredient) => {
+    if (ingredient.translations && ingredient.translations.length > 0) {
+      return ingredient.translations
+        .map((translation) => `${translation.name} (${translation.language})`)
+        .join(', ');
+    }
+    if (ingredient.translations) {
+      return Object.entries(ingredient.translations)
+        .map(([lang, name]) => `${name} (${lang})`)
+        .join(', ');
+    }
+    return 'None';
+  };
 
   return (
     <div style={{ padding: '20px' }}>
@@ -32,14 +47,9 @@ export default function RecipesPage() {
       <Link href="/add_recipe">
         <button className="button">Add Recipe</button>
       </Link>
-      <h2>Ingredients</h2>
-      <ul>
-        {predefinedIngredients.concat(userIngredients).map((ingredient, index) => (
-          <li key={ingredient.id || index}>
-            {ingredient.name} ({ingredient.language}), Translations: {ingredient.translations ? Object.entries(ingredient.translations).map(([lang, translation]) => `${translation} (${lang})`).join(', ') : 'None'}
-          </li>
-        ))}
-      </ul>
+      <Link href="/ingredients">
+        <button className="button">View Ingredients</button>
+      </Link>
     </div>
   );
 }

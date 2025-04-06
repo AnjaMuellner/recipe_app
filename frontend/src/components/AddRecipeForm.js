@@ -1,17 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import dynamic from 'next/dynamic';
 import styles from './AddRecipeForm.module.css';
 import { useIngredients } from '../context/IngredientsContext';
-
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
-import 'react-quill/dist/quill.snow.css';
+import { API_BASE_URL } from '../config/apiConfig';
+import { marked } from 'marked';
 
 export default function AddRecipeForm() {
   const { fetchIngredients } = useIngredients();
   const [newRecipe, setNewRecipe] = useState({
     title: '',
-    ingredients: [{ name: '', amount: '', unit: '' }],
+    ingredients: [{ name: '', quantity: '', unit: '' }],
     servings: '',
     servings_unit: '',
     special_equipment: '',
@@ -21,12 +19,11 @@ export default function AddRecipeForm() {
     source: '',
     prep_time: '',
     cook_time: '',
-    waiting_time: '',
-    total_time: ''
+    rest_time: ''
   });
 
   const [ingredientName, setIngredientName] = useState('');
-  const [ingredientAmount, setIngredientAmount] = useState('');
+  const [ingredientQuantity, setIngredientQuantity] = useState('');
   const [ingredientUnit, setIngredientUnit] = useState('');
   const [existingIngredientId, setExistingIngredientId] = useState('');
   const [isTranslation, setIsTranslation] = useState(false);
@@ -46,7 +43,7 @@ export default function AddRecipeForm() {
         console.error('No token found');
         return;
       }
-      const response = await fetch('http://127.0.0.1:8000/api/predefined-ingredients', {
+      const response = await fetch(`${API_BASE_URL}/api/predefined-ingredients`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -71,7 +68,7 @@ export default function AddRecipeForm() {
   const handleIngredientChange = (index, e) => {
     const { name, value } = e.target;
     const updatedIngredients = [...newRecipe.ingredients];
-    updatedIngredients[index][name] = value;
+    updatedIngredients[index][name] = value || null;
     setNewRecipe({ ...newRecipe, ingredients: updatedIngredients });
 
     if (name === 'name') {
@@ -86,7 +83,7 @@ export default function AddRecipeForm() {
   const handleAddIngredientField = () => {
     setNewRecipe({
       ...newRecipe,
-      ingredients: [...newRecipe.ingredients, { name: '', amount: '', unit: '' }]
+      ingredients: [...newRecipe.ingredients, { name: '', quantity: '', unit: '' }]
     });
   };
 
@@ -120,8 +117,8 @@ export default function AddRecipeForm() {
     setImageFiles(updatedFiles);
   };
 
-  const handleInstructionsChange = (value) => {
-    setNewRecipe({ ...newRecipe, instructions: value });
+  const handleInstructionsChange = (e) => {
+    setNewRecipe({ ...newRecipe, instructions: e.target.value });
   };
 
   const handleSubmit = async (e) => {
@@ -132,24 +129,79 @@ export default function AddRecipeForm() {
       return;
     }
 
+    // Validate ingredients
+    const validIngredients = newRecipe.ingredients.every(
+      (ingredient) => ingredient.name.trim() !== ""
+    );
+    if (!validIngredients) {
+        alert("Each ingredient must have a name.");
+        return;
+    }
+
+    // Replace empty strings in 'unit' with null
+    const sanitizedIngredients = newRecipe.ingredients.map(ingredient => ({
+      ...ingredient,
+      quantity: ingredient.quantity ? parseFloat(ingredient.quantity) : null, // Ensure quantity is a number
+      unit: ingredient.unit.trim() === '' ? null : ingredient.unit // Ensure unit is null or a string
+    }));
+
+    console.log('Sanitized Ingredients JSON:', JSON.stringify(sanitizedIngredients));
+
     const formData = new FormData();
     formData.append('title', newRecipe.title);
-    formData.append('ingredients', JSON.stringify(newRecipe.ingredients));
+    formData.append('ingredients', JSON.stringify(sanitizedIngredients));
     formData.append('servings', newRecipe.servings);
     formData.append('servings_unit', newRecipe.servings_unit);
-    formData.append('special_equipment', newRecipe.special_equipment);
-    formData.append('instructions', newRecipe.instructions);
-    formData.append('thumbnail', thumbnailFile);
+    
+    // Ensure instructions are sent as a string
+    const instructionsString = newRecipe.instructions.trim();
+
+    // Remove empty fields from the form data
+    if (newRecipe.special_equipment.trim()) {
+      formData.append('special_equipment', newRecipe.special_equipment);
+    }
+    if (newRecipe.prep_time) {
+      formData.append('prep_time', newRecipe.prep_time);
+    }
+    if (newRecipe.cook_time) {
+      formData.append('cook_time', newRecipe.cook_time);
+    }
+    if (newRecipe.rest_time) {
+      formData.append('rest_time', newRecipe.rest_time);
+    }
+
+    // Append instructions as a string
+    formData.append('instructions', instructionsString);
+
+    // Only append thumbnail if a file is selected
+    if (thumbnailFile) {
+      formData.append('thumbnail', thumbnailFile);
+    }
+    
     imageFiles.forEach((file, index) => {
       formData.append(`images_url_${index}`, file);
     });
     formData.append('source', newRecipe.source);
-    formData.append('prep_time', newRecipe.prep_time);
-    formData.append('cook_time', newRecipe.cook_time);
-    formData.append('waiting_time', newRecipe.waiting_time);
-    formData.append('total_time', newRecipe.total_time);
 
-    const response = await fetch('http://127.0.0.1:8000/api/recipes', {
+    // Ensure required fields are included
+    if (!newRecipe.title.trim()) {
+      alert('Title is required.');
+      return;
+    }
+
+    if (!newRecipe.instructions.trim()) {
+      alert('Instructions are required.');
+      return;
+    }
+
+    if (!newRecipe.ingredients.length || !newRecipe.ingredients[0].name.trim()) {
+      alert('At least one ingredient with a valid name is required.');
+      return;
+    }
+
+    console.log('Servings Unit:', newRecipe.servings_unit);
+
+    const response = await fetch(`${API_BASE_URL}/api/recipes`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`
@@ -172,7 +224,7 @@ export default function AddRecipeForm() {
       return;
     }
   
-    const url = isTranslation ? `http://127.0.0.1:8000/api/ingredients/${existingIngredientId}/translations` : 'http://127.0.0.1:8000/api/ingredients';
+    const url = isTranslation ? `${API_BASE_URL}/api/ingredients/${existingIngredientId}/translations` : `${API_BASE_URL}/api/ingredients`;
     const method = 'POST';
     const body = JSON.stringify({ name: ingredientName, language: newIngredientLanguage });
   
@@ -218,11 +270,11 @@ export default function AddRecipeForm() {
           <div key={index} className={styles.ingredientInput}>
             <input
               type="number"
-              name="amount"
-              value={ingredient.amount}
+              name="quantity"
+              value={ingredient.quantity}
               onChange={(e) => handleIngredientChange(index, e)}
-              placeholder="Amount"
-              className={styles.amountInput}
+              placeholder="Quantity"
+              className={styles.quantityInput}
             />
             <input
               type="text"
@@ -257,23 +309,52 @@ export default function AddRecipeForm() {
         <input type="number" id="servings" name="servings" value={newRecipe.servings} onChange={handleInputChange} placeholder="Servings" />
       </div>
       <div className={styles.formGroup}>
-        <label htmlFor="servings_unit">Servings Unit</label>
-        <input type="text" id="servings_unit" name="servings_unit" value={newRecipe.servings_unit} onChange={handleInputChange} placeholder="Servings Unit" />
+        <label htmlFor="servings_unit">Servings Unit <span className={styles.required}>*</span></label>
+        <select
+          id="servings_unit"
+          name="servings_unit"
+          value={newRecipe.servings_unit}
+          onChange={handleInputChange}
+          required
+        >
+          <option value="">Select Servings Unit</option>
+          <option value="NUMBER">Number</option>
+          <option value="SPRINGFORM">Springform</option>
+          <option value="BAKING_TRAY">Baking Tray</option>
+        </select>
       </div>
       <div className={styles.formGroup}>
         <label htmlFor="special_equipment">Special Equipment</label>
-        <textarea id="special_equipment" name="special_equipment" value={newRecipe.special_equipment} onChange={handleInputChange} placeholder="Special Equipment" />
+        <textarea
+          id="special_equipment"
+          name="special_equipment"
+          value={newRecipe.special_equipment}
+          onChange={handleInputChange}
+          onInput={(e) => {
+            e.target.style.height = 'auto';
+            e.target.style.height = `${e.target.scrollHeight}px`;
+          }}
+          placeholder="Special Equipment"
+          rows="1"
+          className={styles.specialEquipment}
+        />
       </div>
       <div className={styles.formGroup}>
         <label htmlFor="instructions">Instructions <span className={styles.required}>*</span></label>
-        <ReactQuill
+        <textarea
+          id="instructions"
+          name="instructions"
           value={newRecipe.instructions}
           onChange={handleInstructionsChange}
-          placeholder="Instructions"
+          placeholder="Write your instructions in markdown"
           required
           className={styles.instructionsField}
-          style={{ color: 'black', backgroundColor: 'white' }}
+          rows="10"
         />
+        <div className={styles.markdownPreview}>
+          <h3>Preview:</h3>
+          <div dangerouslySetInnerHTML={{ __html: marked(newRecipe.instructions || '') }} />
+        </div>
       </div>
       <div className={styles.formGroup}>
         <label htmlFor="source">Source</label>
@@ -288,12 +369,8 @@ export default function AddRecipeForm() {
         <input type="number" id="cook_time" name="cook_time" value={newRecipe.cook_time} onChange={handleInputChange} placeholder="Cook Time (minutes)" />
       </div>
       <div className={styles.formGroup}>
-        <label htmlFor="waiting_time">Waiting Time (minutes)</label>
-        <input type="number" id="waiting_time" name="waiting_time" value={newRecipe.waiting_time} onChange={handleInputChange} placeholder="Waiting Time (minutes)" />
-      </div>
-      <div className={styles.formGroup}>
-        <label htmlFor="total_time">Total Time (minutes)</label>
-        <input type="number" id="total_time" name="total_time" value={newRecipe.total_time} onChange={handleInputChange} placeholder="Total Time (minutes)" />
+        <label htmlFor="rest_time">Rest Time (minutes)</label>
+        <input type="number" id="rest_time" name="rest_time" value={newRecipe.rest_time} onChange={handleInputChange} placeholder="Rest Time (minutes)" />
       </div>
       <div className={styles.formGroup}>
         <label htmlFor="thumbnail">Thumbnail</label>

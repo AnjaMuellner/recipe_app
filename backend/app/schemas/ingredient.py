@@ -30,9 +30,10 @@ class IngredientTranslation(IngredientTranslationBase):
     class Config:
         orm_mode: True
 
-class IngredientResponse(IngredientBase):
-    id: int
-    creator_id: int
+class IngredientResponse(BaseModel):
+    name: str
+    quantity: Optional[float] = None
+    unit: Optional[str] = None
 
     class Config:
-        orm_mode: True
+        orm_mode = True

@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { API_BASE_URL } from '../config/apiConfig';
 
 export default function Home() {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/')
+      fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}`)
       .then(response => response.json())
       .then(data => setMessage(data.message));
   }, []);
