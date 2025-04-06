@@ -35,8 +35,12 @@ app.add_middleware(
 
 class LogRequestMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request, call_next):
-        body = await request.body()
-        print("Incoming request data:", body.decode("utf-8"))
+        content_type = request.headers.get("content-type", "")
+        if "multipart/form-data" in content_type:
+            print("Incoming request with multipart/form-data")
+        else:
+            body = await request.body()
+            print("Incoming request data:", body.decode("utf-8", errors="replace"))  # Use 'replace' to avoid crashes
         response = await call_next(request)
         return response
 

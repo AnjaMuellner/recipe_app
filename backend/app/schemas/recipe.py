@@ -19,7 +19,7 @@ class RecipeBase(BaseModel):
     ingredients: List[IngredientResponse]
     servings: int
     servings_unit: Unit
-    special_equipment: Optional[dict] = None  # JSON object from the frontend
+    special_equipment: Optional[List[str]] = []  # Updated to a list of strings
     instructions: str  # JSON object from the frontend
     thumbnail_url: Optional[str] = None
     images_url: Optional[dict] = None

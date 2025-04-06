@@ -72,10 +72,10 @@ def read_recipes(current_user: User = Depends(get_current_user), db: Session = D
 def create_recipe(
     title: str = Form(...),
     ingredients: str = Form(...),  # JSON string with name, quantity, and unit
-    instructions: str = Form(...),  # Treat instructions as a plain string
+        instructions: str = Form(...),  # Treat instructions as a plain string
     servings: Optional[int] = Form(None),
     servings_unit: Optional[str] = Form(None),
-    special_equipment: Optional[str] = Form(None),
+    special_equipment: Optional[List[str]] = Form(None),
     source: Optional[str] = Form(None),
     prep_time: Optional[int] = Form(None),
     cook_time: Optional[int] = Form(None),
@@ -89,7 +89,7 @@ def create_recipe(
     try:
         # Parse JSON strings into Python objects
         ingredients = json.loads(ingredients)
-        special_equipment = json.loads(special_equipment) if special_equipment else None
+        special_equipment = json.loads(special_equipment) if special_equipment else []
     except json.JSONDecodeError as e:
         logger.error(f"JSON decoding error: {e}")
         raise HTTPException(
@@ -97,7 +97,16 @@ def create_recipe(
             detail="Invalid JSON format in ingredients or special_equipment"
         )
 
+    if special_equipment is None:
+        special_equipment = []
+
     # Validate and fetch ingredients from the database
+    if not ingredients:
+        raise HTTPException(
+            status_code=400,
+            detail="Ingredients field cannot be empty."
+        )
+
     ingredient_names = [ingredient['name'] for ingredient in ingredients if 'name' in ingredient]
     if not ingredient_names:
         raise HTTPException(

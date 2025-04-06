@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 from backend.app.db.base_class import Base
 import enum
+from sqlalchemy.dialects.postgresql import ARRAY  # Import ARRAY for list support
 
 class Unit(enum.Enum):
     NUMBER = "number"
@@ -32,7 +33,7 @@ class Recipe(Base):
     title = Column(String(255), nullable=False, index=True)
     servings = Column(Integer, nullable=True, index=True)
     servings_unit = Column(Enum(Unit), index=True)
-    special_equipment = Column(JSON, nullable=True, index=True)
+    special_equipment = Column(ARRAY(String), nullable=True, index=True)  # Updated to store a list of strings
     instructions = Column(String, nullable=False, index=True)
 
     thumbnail_url = Column(String(255), nullable=True, index=True)
