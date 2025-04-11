@@ -1,6 +1,6 @@
 [
   {
-    "id": 500,
+    "id": 1,
     "name": "Potato",
     "language": "en",
     "translations": {
@@ -9,7 +9,7 @@
     }
   },
   {
-    "id": 501,
+    "id": 2,
     "name": "Tomato",
     "language": "en",
     "translations": {
@@ -17,7 +17,7 @@
     }
   },
   {
-    "id": 502,
+    "id": 3,
     "name": "Carrot",
     "language": "en",
     "translations": {

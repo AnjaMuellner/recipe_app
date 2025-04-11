@@ -1,0 +1,115 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #2c2c2c;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.recipeDetails {
+  font-family: Arial, sans-serif;
+  color: #ccc;
+}
+
+.title {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #db00eb;
+}
+
+.thumbnail {
+  max-width: 300px; /* Set a maximum width for the thumbnail */
+  max-height: 300px; /* Set a maximum height for the thumbnail */
+  height: auto; /* Maintain aspect ratio */
+  display: block;
+  margin: 0 auto; /* Center the thumbnail */
+  border-radius: 8px;
+}
+
+.images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.image {
+  max-width: 150px; /* Set a maximum width for the images */
+  height: auto; /* Maintain aspect ratio */
+  margin: 5px; /* Add spacing between images */
+  border-radius: 8px;
+}
+
+.info {
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.sectionTitle {
+  font-size: 1.8rem;
+  margin-top: 30px;
+  margin-bottom: 10px;
+  color: #6a00eb;
+}
+
+.ingredientsList {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin-bottom: 20px;
+}
+
+.ingredientItem {
+  margin-bottom: 5px;
+}
+
+.instructions {
+  line-height: 1.8;
+  background-color: #454545;
+  padding: 15px;
+  border-radius: 5px;
+  border: 1px solid #454545;
+}
+
+.deleteButton {
+  background-color: #eb005e;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 20px;
+  display: block;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.deleteButton:hover {
+  background-color: #c0044b;
+}
+
+.timeGap {
+  margin: 0 10px;
+}
+
+.diameterInput {
+  width: 60px;
+  padding: 5px;
+  margin-left: 5px;
+  border: 1px solid #454545;
+  border-radius: 4px;
+  background-color: #454545;
+  color: #ccc;
+  font-size: 14px;
+  text-align: center;
+}
+
+.diameterInput:focus {
+  outline: none;
+  border-color: #6a00eb;
+  box-shadow: 0 0 5px rgba(106, 0, 235, 0.5);
+}

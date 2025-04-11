@@ -31,9 +31,9 @@ class Recipe(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String(255), nullable=False, index=True)
-    servings = Column(Integer, nullable=True, index=True)
+    servings = Column(JSON, nullable=True, index=True)  # Change to JSON to support different formats
     servings_unit = Column(Enum(Unit), index=True)
-    special_equipment = Column(ARRAY(String), nullable=True, index=True)  # Updated to store a list of strings
+    special_equipment = Column(JSON, nullable=True, index=True)  # Use JSON for compatibility with SQLite
     instructions = Column(String, nullable=False, index=True)
 
     thumbnail_url = Column(String(255), nullable=True, index=True)

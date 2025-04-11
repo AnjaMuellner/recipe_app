@@ -15,6 +15,7 @@ class Ingredient(IngredientBase):
 
     class Config:
         orm_mode: True
+        from_attributes = True
 
 class IngredientTranslationBase(BaseModel):
     language: str
@@ -28,7 +29,7 @@ class IngredientTranslation(IngredientTranslationBase):
     ingredient_id: int
 
     class Config:
-        orm_mode: True
+        from_attributes = True
 
 class IngredientResponse(BaseModel):
     name: str
@@ -36,4 +37,4 @@ class IngredientResponse(BaseModel):
     unit: Optional[str] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True

@@ -2,6 +2,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy.exc import SQLAlchemyError
 from starlette.middleware.base import BaseHTTPMiddleware
 
@@ -46,6 +47,9 @@ class LogRequestMiddleware(BaseHTTPMiddleware):
 
 # Add middleware to log incoming requests
 app.add_middleware(LogRequestMiddleware)
+
+# Mount the uploads directory as a static files route
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 @app.exception_handler(SQLAlchemyError)
 async def sqlalchemy_exception_handler(request, exc):

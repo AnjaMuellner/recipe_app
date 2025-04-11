@@ -11,58 +11,26 @@ from backend.app.utils import load_predefined_ingredients, get_current_user
 router = APIRouter()
 logger = logging.getLogger(__name__)
 
-@router.get("/predefined-ingredients")
-def get_predefined_ingredients(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    predefined_ingredients = load_predefined_ingredients("c:/Users/Anja/recipe_app/backend/ingredients.json")
-    
-    # Fetch translations for predefined ingredients from the database
-    predefined_ingredient_ids = [ing["id"] for ing in predefined_ingredients]
-    predefined_translations = db.query(IngredientTranslation).filter(
-        IngredientTranslation.ingredient_id.in_(predefined_ingredient_ids)
-    ).all()
-    
-    # Map translations from the database to their respective predefined ingredients
-    predefined_translations_map = {}
-    for translation in predefined_translations:
-        if translation.ingredient_id not in predefined_translations_map:
-            predefined_translations_map[translation.ingredient_id] = []
-        predefined_translations_map[translation.ingredient_id].append({
-            "id": translation.id,
-            "name": translation.name,
-            "language": translation.language
-        })
-    
-    # Merge JSON translations with database translations
-    for ingredient in predefined_ingredients:
-        json_translations = [
-            {"name": name, "language": lang}
-            for lang, name in ingredient.get("translations", {}).items()
-        ]
-        db_translations = predefined_translations_map.get(ingredient["id"], [])
-        ingredient["translations"] = json_translations + db_translations
+@router.get("/ingredients", response_model=List[IngredientSchema])
+def get_all_ingredients(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    # Fetch all ingredients from the database
+    ingredients = db.query(Ingredient).options(joinedload(Ingredient.translations)).all()
 
-    # Eagerly load translations for user-added ingredients
-    user_ingredients = db.query(Ingredient).options(joinedload(Ingredient.translations)).filter(
-        Ingredient.creator_id == current_user.id
-    ).all()
-    
-    # Convert user ingredients to a dictionary format with translations
-    user_ingredients_data = [
+    # Convert ingredients to a dictionary format with translations
+    ingredients_data = [
         {
             "id": ingredient.id,
             "name": ingredient.name,
             "language": ingredient.language,
+            "creator_id": ingredient.creator_id,
             "translations": [
-                {"id": t.id, "name": t.name, "language": t.language} for t in ingredient.translations
+                {"id": t.id, "name": t.name, "language": t.language, "ingredient_id": ingredient.id} for t in ingredient.translations
             ]
         }
-        for ingredient in user_ingredients
+        for ingredient in ingredients
     ]
 
-    return {
-        "predefined_ingredients": predefined_ingredients,
-        "user_ingredients": user_ingredients_data
-    }
+    return ingredients_data
 
 @router.post("/ingredients", response_model=IngredientSchema)
 def create_ingredient(ingredient: IngredientCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
@@ -74,27 +42,11 @@ def create_ingredient(ingredient: IngredientCreate, db: Session = Depends(get_db
 
 @router.post("/ingredients/{ingredient_id}/translations", response_model=IngredientTranslationSchema)
 def add_translation(ingredient_id: int, translation: IngredientTranslationCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    # Check if the ingredient is predefined or user-added
-    predefined_ingredients = load_predefined_ingredients("c:/Users/Anja/recipe_app/backend/ingredients.json")
+    # Fetch the ingredient from the database
     ingredient = db.query(Ingredient).filter(Ingredient.id == ingredient_id).first()
-    
+
     if not ingredient:
-        # If the ingredient is predefined, create a new database entry for it
-        predefined_ingredient = next((ing for ing in predefined_ingredients if ing["id"] == ingredient_id), None)
-        if not predefined_ingredient:
-            logger.debug(f"Ingredient with id {ingredient_id} not found in predefined ingredients.")
-            raise HTTPException(status_code=404, detail="Ingredient not found")
-        
-        # Add the predefined ingredient to the database
-        ingredient = Ingredient(
-            id=predefined_ingredient["id"],
-            name=predefined_ingredient["name"],
-            language=predefined_ingredient["language"],
-            creator_id=current_user.id  # Associate it with the current user
-        )
-        db.add(ingredient)
-        db.commit()
-        db.refresh(ingredient)
+        raise HTTPException(status_code=404, detail="Ingredient not found")
 
     # Add the translation to the database
     db_translation = IngredientTranslation(**translation.dict(), ingredient_id=ingredient.id)
@@ -106,20 +58,43 @@ def add_translation(ingredient_id: int, translation: IngredientTranslationCreate
 @router.delete("/ingredients/{ingredient_id}", status_code=204)
 def delete_ingredient(ingredient_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     # Fetch the ingredient
-    ingredient = db.query(Ingredient).filter(Ingredient.id == ingredient_id, Ingredient.creator_id == current_user.id).first()
+    ingredient = db.query(Ingredient).filter(Ingredient.id == ingredient_id).first()
     
     if not ingredient:
-        raise HTTPException(status_code=404, detail="Ingredient not found or not owned by the user")
+        logger.error(f"Ingredient with ID {ingredient_id} not found.")
+        raise HTTPException(status_code=404, detail="Ingredient not found")
     
     # Check if the ingredient is used in any recipe
-    recipes_using_ingredient = db.query(Recipe).filter(Recipe.ingredients.contains({str(ingredient_id): {}})).count()
+    try:
+        recipes_using_ingredient = db.query(Recipe).filter(Recipe.ingredients.any(id=ingredient_id)).count()
+    except Exception as e:
+        logger.error(f"Error checking recipes for ingredient {ingredient_id}: {e}")
+        raise HTTPException(status_code=500, detail="Error checking ingredient usage in recipes")
+    
     if recipes_using_ingredient > 0:
         raise HTTPException(status_code=400, detail="Ingredient is used in a recipe and cannot be deleted")
     
-    # Delete the ingredient
-    db.delete(ingredient)
-    db.commit()
-    return
+    # Delete related translations
+    try:
+        db.query(IngredientTranslation).filter(IngredientTranslation.ingredient_id == ingredient_id).delete()
+        db.commit()
+    except Exception as e:
+        logger.error(f"Error deleting translations for ingredient {ingredient_id}: {e}")
+        raise HTTPException(status_code=500, detail="Error deleting related translations")
+    
+    # Allow deletion of predefined ingredients if not used in recipes
+    if ingredient.creator_id is None or ingredient.creator_id == current_user.id:
+        try:
+            db.delete(ingredient)
+            db.commit()
+            logger.info(f"Ingredient with ID {ingredient_id} deleted successfully.")
+            return
+        except Exception as e:
+            logger.error(f"Error deleting ingredient {ingredient_id}: {e}")
+            raise HTTPException(status_code=500, detail="Error deleting ingredient")
+    
+    logger.warning(f"User {current_user.id} attempted to delete ingredient {ingredient_id} without permission.")
+    raise HTTPException(status_code=403, detail="You do not have permission to delete this ingredient")
 
 @router.delete("/ingredients/{ingredient_id}/translations/{translation_id}", status_code=204)
 def delete_translation(
@@ -139,14 +114,23 @@ def delete_translation(
         raise HTTPException(status_code=404, detail="Translation not found or not owned by the user")
 
     # Check if the translation is used in any recipe
-    recipes_using_translation = db.query(Recipe).filter(
-        Recipe.ingredients.contains({str(ingredient_id): {"name": translation.name}})
-    ).count()
+    try:
+        recipes_using_translation = db.query(Recipe).filter(
+            Recipe.ingredients.any(id=ingredient_id)
+        ).count()
+    except Exception as e:
+        logger.error(f"Error checking recipes for translation {translation_id}: {e}")
+        raise HTTPException(status_code=500, detail="Error checking translation usage in recipes")
 
     if recipes_using_translation > 0:
         raise HTTPException(status_code=400, detail="Translation is used in a recipe and cannot be deleted")
 
     # Delete the translation
-    db.delete(translation)
-    db.commit()
-    return
+    try:
+        db.delete(translation)
+        db.commit()
+        logger.info(f"Translation with ID {translation_id} deleted successfully.")
+        return
+    except Exception as e:
+        logger.error(f"Error deleting translation {translation_id}: {e}")
+        raise HTTPException(status_code=500, detail="Error deleting translation")

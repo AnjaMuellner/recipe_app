@@ -21,7 +21,7 @@ class Cookbook(CookbookBase):
     chapters: List['CookbookChapter'] = []
 
     class Config:
-        orm_mode: True
+        from_attributes = True
 
 class CookbookRecipe(BaseModel):
     id: int
@@ -32,7 +32,7 @@ class CookbookRecipe(BaseModel):
     created_at: datetime
 
     class Config:
-        orm_mode: True
+        from_attributes = True
 
 class CookbookRecipeFeedback(BaseModel):
     id: int
@@ -43,7 +43,7 @@ class CookbookRecipeFeedback(BaseModel):
     created_at: datetime
 
     class Config:
-        orm_mode: True
+        from_attributes = True
 
 class CookbookChapter(BaseModel):
     id: int
@@ -52,4 +52,4 @@ class CookbookChapter(BaseModel):
     cookbook_id: int
 
     class Config:
-        orm_mode: True
+        from_attributes = True

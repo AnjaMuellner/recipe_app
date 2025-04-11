@@ -1,23 +1,37 @@
 import { useIngredients } from '../context/IngredientsContext';
 import Link from 'next/link';
 import styles from '../styles/IngredientsPage.module.css';
+import { useEffect, useState } from 'react';
 
 export default function IngredientsPage() {
-  const { predefinedIngredients, userIngredients, deleteIngredient, deleteTranslation } = useIngredients();
+  const { ingredients, deleteIngredient, deleteTranslation, isIngredientUsed } = useIngredients();
+  const [usedIngredients, setUsedIngredients] = useState({});
 
-  const getTranslations = (ingredient, isUserAdded) => {
+  useEffect(() => {
+    const checkUsedIngredients = async () => {
+      const usedStatus = {};
+      for (const ingredient of ingredients) {
+        usedStatus[ingredient.id] = await isIngredientUsed(ingredient.id);
+      }
+      setUsedIngredients(usedStatus);
+    };
+
+    if (ingredients.length > 0) {
+      checkUsedIngredients();
+    }
+  }, [ingredients]);
+
+  const getTranslations = (ingredient) => {
     if (ingredient.translations && ingredient.translations.length > 0) {
       return ingredient.translations.map((translation) => (
         <div key={translation.id} className={styles.translationItem}>
           {translation.name} ({translation.language})
-          {isUserAdded && (
-            <button
-              className={styles.translationDeleteButton}
-              onClick={() => deleteTranslation(ingredient.id, translation.id)}
-            >
-              x
-            </button>
-          )}
+          <button
+            className={styles.translationDeleteButton}
+            onClick={() => deleteTranslation(ingredient.id, translation.id)}
+          >
+            x
+          </button>
         </div>
       ));
     }
@@ -30,43 +44,32 @@ export default function IngredientsPage() {
         <h1>Ingredients Overview</h1>
       </div>
       <div className={styles.ingredientsList}>
-        <h2>Predefined Ingredients</h2>
         <ul>
-          {predefinedIngredients.map((ingredient) => (
-            <li key={ingredient.id} className={styles.ingredientItem}>
-              <div className={styles.ingredientName}>
-                <strong>{ingredient.name}</strong> ({ingredient.language})
-              </div>
-              <div>
-                <strong>Translations:</strong>
-              </div>
-              <div className={styles.ingredientTranslations}>
-                {getTranslations(ingredient, false)} {/* Predefined ingredients cannot be deleted */}
-              </div>
-            </li>
-          ))}
-        </ul>
-        <h2>User-Added Ingredients</h2>
-        <ul>
-          {userIngredients.map((ingredient) => (
-            <li key={ingredient.id} className={styles.ingredientItem}>
-              <div className={styles.ingredientName}>
-                <strong>{ingredient.name}</strong> ({ingredient.language})
-              </div>
-              <div>
-                <strong>Translations:</strong>
-              </div>
-              <div className={styles.ingredientTranslations}>
-                {getTranslations(ingredient, true)} {/* User-added ingredients can have deletable translations */}
-              </div>
-              <button
-                className={styles.deleteButton}
-                onClick={() => deleteIngredient(ingredient.id)}
-              >
-                Delete Ingredient
-              </button>
-            </li>
-          ))}
+          {Array.isArray(ingredients) && ingredients.length > 0 ? (
+            ingredients.map((ingredient) => (
+              <li key={ingredient.id} className={styles.ingredientItem}>
+                <div className={styles.ingredientName}>
+                  <strong>{ingredient.name}</strong> ({ingredient.language})
+                </div>
+                <div>
+                  <strong>Translations:</strong>
+                </div>
+                <div className={styles.ingredientTranslations}>
+                  {getTranslations(ingredient)}
+                </div>
+                {!usedIngredients[ingredient.id] && (
+                  <button
+                    className={styles.deleteButton}
+                    onClick={() => deleteIngredient(ingredient.id)}
+                  >
+                    Delete Ingredient
+                  </button>
+                )}
+              </li>
+            ))
+          ) : (
+            <p>No ingredients found.</p>
+          )}
         </ul>
       </div>
       <Link href="/dashboard">

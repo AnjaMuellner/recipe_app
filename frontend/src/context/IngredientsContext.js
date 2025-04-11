@@ -6,20 +6,19 @@ const IngredientsContext = createContext();
 export const useIngredients = () => useContext(IngredientsContext);
 
 export const IngredientsProvider = ({ children }) => {
-  const [predefinedIngredients, setPredefinedIngredients] = useState([]);
-  const [userIngredients, setUserIngredients] = useState([]);
+  const [ingredients, setIngredients] = useState([]);
 
   const fetchIngredients = async () => {
     const token = localStorage.getItem('token');
-    const response = await fetch(`${API_BASE_URL}/api/predefined-ingredients`, {
+    const response = await fetch(`${API_BASE_URL}/api/ingredients`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
     });
     const data = await response.json();
-  
-    setPredefinedIngredients(data.predefined_ingredients || []);
-    setUserIngredients(data.user_ingredients || []);
+
+    // Ensure data is an array before setting it
+    setIngredients(Array.isArray(data) ? data : []);
   };
 
   const deleteIngredient = async (ingredientId) => {
@@ -46,18 +45,33 @@ export const IngredientsProvider = ({ children }) => {
           }
         }
       );
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         alert(errorData.detail); // Show error message to the user
         return;
       }
-  
+
       // Refresh the ingredient list after deletion
       fetchIngredients();
     } catch (error) {
       console.error("Failed to delete translation:", error);
     }
+  };
+
+  const isIngredientUsed = async (ingredientId) => {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_BASE_URL}/api/recipes?ingredient_id=${ingredientId}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    if (response.ok) {
+      const data = await response.json();
+      return data.length > 0; // Return true if the ingredient is used in any recipe
+    }
+    console.error("Failed to check if ingredient is used:", response.statusText);
+    return false;
   };
 
   useEffect(() => {
@@ -67,11 +81,11 @@ export const IngredientsProvider = ({ children }) => {
   return (
     <IngredientsContext.Provider
       value={{
-        predefinedIngredients,
-        userIngredients,
+        ingredients,
         fetchIngredients,
         deleteIngredient,
         deleteTranslation,
+        isIngredientUsed, // Expose the new function
       }}
     >
       {children}

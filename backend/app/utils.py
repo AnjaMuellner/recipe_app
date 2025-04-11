@@ -6,6 +6,7 @@ from starlette.status import HTTP_401_UNAUTHORIZED
 from dotenv import load_dotenv
 import os
 import json
+from passlib.context import CryptContext
 
 from backend.app.models import User
 from backend.app.schemas import TokenData
@@ -17,6 +18,12 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    """Verify a password using passlib's CryptContext."""
+    return pwd_context.verify(plain_password, hashed_password)
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     credentials_exception = HTTPException(

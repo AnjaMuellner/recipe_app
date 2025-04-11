@@ -6,4 +6,4 @@ class SharedRecipe(BaseModel):
     shared_with_user_id: int
 
     class Config:
-        orm_mode: True
+        from_attributes = True
