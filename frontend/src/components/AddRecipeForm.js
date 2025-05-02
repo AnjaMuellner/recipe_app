@@ -51,7 +51,7 @@ export default function AddRecipeForm() {
       if (response.ok) {
         const data = await response.json();
         console.log('Fetched ingredients with translations:', data);
-        setIngredientList(data || []); // Set all ingredients directly, including translations
+        setIngredientList(data || []);
       } else {
         console.error('Failed to fetch ingredients:', response.statusText);
       }
@@ -75,11 +75,11 @@ export default function AddRecipeForm() {
       setFilteredIngredients([
         ...ingredientList.filter((ingredient) =>
           ingredient.name.toLowerCase().includes(value.toLowerCase()) ||
-          (ingredient.translations?.some((translation) => // Ensure translations exists
+          (ingredient.translations?.some((translation) =>
             translation.name.toLowerCase().includes(value.toLowerCase())
           ))
         ),
-        { id: 'new', name: `Add "${value}" as new ingredient` } // Add dynamic option
+        { id: 'new', name: `Add "${value}" as new ingredient` }
       ]);
     }
   };
@@ -128,7 +128,7 @@ export default function AddRecipeForm() {
   const handleAddSpecialEquipmentField = () => {
     setNewRecipe({
       ...newRecipe,
-      special_equipment: [...newRecipe.special_equipment, ''] // Append to the end of the list
+      special_equipment: [...newRecipe.special_equipment, '']
     });
   };
 
@@ -193,13 +193,12 @@ export default function AddRecipeForm() {
       return;
     }
 
-    // Replace empty strings in 'unit' with null
+    // Replace empty strings in 'unit' with null, and ensure 'quantity' is a float
     const sanitizedIngredients = newRecipe.ingredients.map(ingredient => ({
       ...ingredient,
-      quantity: ingredient.quantity ? parseFloat(ingredient.quantity) : null, // Ensure quantity is a float
-      unit: ingredient.unit.trim() === '' ? null : ingredient.unit // Ensure unit is null or a string
+      quantity: ingredient.quantity ? parseFloat(ingredient.quantity) : null,
+      unit: ingredient.unit.trim() === '' ? null : ingredient.unit
     }));
-    // Debugging: Log sanitized ingredients to confirm the format
     console.log('Sanitized Ingredients:', sanitizedIngredients);
 
     // Remove empty special equipment entries and ensure the order is preserved
@@ -210,9 +209,9 @@ export default function AddRecipeForm() {
     const formData = new FormData();
     formData.append('title', newRecipe.title);
     formData.append('ingredients', JSON.stringify(sanitizedIngredients));
-    formData.append('servings', JSON.stringify(formattedServings)); // Send servings as JSON
+    formData.append('servings', JSON.stringify(formattedServings));
     formData.append('servings_unit', newRecipe.servings_unit);
-    formData.append('special_equipment', JSON.stringify(sanitizedSpecialEquipment)); // Send as JSON string
+    formData.append('special_equipment', JSON.stringify(sanitizedSpecialEquipment));
     
     // Ensure instructions are sent as a string
     const instructionsString = newRecipe.instructions.trim();
@@ -243,7 +242,7 @@ export default function AddRecipeForm() {
     }
 
     imageFiles.forEach((file) => {
-      formData.append('images', file); // Ensure 'images' matches the backend field
+      formData.append('images', file);
     });
 
     formData.append('source', newRecipe.source);
@@ -275,8 +274,6 @@ export default function AddRecipeForm() {
     }
 
     console.log('Servings Unit:', newRecipe.servings_unit);
-
-    // Debugging: Log all form data keys and values
     console.log('FormData entries:');
     for (let [key, value] of formData.entries()) {
       console.log(`${key}:`, value);
@@ -293,7 +290,7 @@ export default function AddRecipeForm() {
     if (response.ok) {
       router.push('/dashboard');
     } else {
-      const errorText = await response.text(); // Log server response for debugging
+      const errorText = await response.text();
       console.error('Failed to add recipe:', response.statusText, errorText);
     }
   };
@@ -337,7 +334,7 @@ export default function AddRecipeForm() {
     const selectedValue = e.target.value;
     if (selectedValue.startsWith('Add "')) {
       const newIngredientName = selectedValue.match(/Add "(.*)" as new ingredient/)[1];
-      setIngredientName(newIngredientName); // Pre-fill the pop-up with the typed string
+      setIngredientName(newIngredientName);
       setShowAddIngredientPopup(true);
     }
   };
@@ -378,13 +375,13 @@ export default function AddRecipeForm() {
                 placeholder="Ingredient Name"
                 list="ingredient-options"
                 onSelect={handleSelectIngredient}
-                autoComplete="off" // Disable browser autocomplete
+                autoComplete="off"
               />
               <datalist id="ingredient-options">
                 {filteredIngredients.map((ingredient) => (
                   <React.Fragment key={ingredient.id}>
                     <option value={ingredient.name} />
-                    {ingredient.translations?.map((translation) => ( // Ensure translations exists
+                    {ingredient.translations?.map((translation) => (
                       <option key={translation.id} value={translation.name} />
                     ))}
                   </React.Fragment>

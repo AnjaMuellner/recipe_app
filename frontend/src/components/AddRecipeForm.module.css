@@ -38,8 +38,8 @@
   font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  width: 100%; /* Ensures it takes the full width of the container */
-  box-sizing: border-box; /* Ensures padding is included in the width */
+  width: 100%;
+  box-sizing: border-box;
 }
 .formGroup select option[value=""] {
   color: #888;
@@ -70,14 +70,14 @@
 }
 
 .specialEquipment {
-  resize: none; /* Prevent manual resizing */
-  overflow: hidden; /* Hide scrollbars */
-  transition: height 0.2s ease; /* Smooth height adjustment */
+  resize: none;
+  overflow: hidden;
+  transition: height 0.2s ease;
 }
 
 .specialEquipmentInput {
   display: flex;
-  gap: 10px; /* Match the gap used in .ingredientInput */
+  gap: 10px;
   align-items: center;
   margin-bottom: 10px;
 }
@@ -175,13 +175,13 @@
   cursor: pointer;
   font-size: 14px;
   display: inline-block;
-  text-align: center; /* Ensure text is centered */
+  text-align: center;
   position: relative;
-  z-index: 1; /* Ensure it is below the input */
-  width: auto; /* Adjust width to fit content */
-  height: auto; /* Adjust height to fit content */
-  line-height: normal; /* Prevent extra height caused by line-height */
-  white-space: nowrap; /* Prevent the button from stretching */
+  z-index: 1;
+  width: auto;
+  height: auto;
+  line-height: normal;
+  white-space: nowrap;
 }
 
 .fileInputButton:hover {
@@ -225,7 +225,7 @@
   font-size: 2rem;
   font-weight: bold;
   margin-bottom: 20px;
-  color: #ffffff; /* Adjust color as needed */
+  color: #ffffff;
 }
 
 .servingsInputGroup {

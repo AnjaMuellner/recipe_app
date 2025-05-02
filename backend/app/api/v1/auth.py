@@ -15,7 +15,7 @@ load_dotenv(dotenv_path=dotenv_path)
 from backend.app.models import User, Ingredient, IngredientTranslation
 from backend.app.db import get_db
 from backend.app.schemas import UserCreate, UserResponseWithToken, UserLogin
-from backend.app.utils import load_predefined_ingredients  # Import utility to load predefined ingredients
+from backend.app.utils import load_predefined_ingredients
 
 router = APIRouter()
 
@@ -23,9 +23,16 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
+INGREDIENTS_FILE_PATH = os.getenv("INGREDIENTS_FILE_PATH")
 
 if not SECRET_KEY:
     raise ValueError("SECRET_KEY is not set. Check your .env file.")
+
+if not ALGORITHM:
+    raise ValueError("ALGORITHM is not set. Check your .env file.")
+
+if not INGREDIENTS_FILE_PATH:
+    raise ValueError("INGREDIENTS_FILE_PATH is not set. Check your .env file.")
 
 def get_password_hash(password: str) -> str:
     """Hash a password using passlib's CryptContext."""
@@ -65,7 +72,7 @@ async def register_user(request: Request, user: UserCreate, db: Session = Depend
         logging.info(f"User registered successfully: {user.username}")
 
         # Load predefined ingredients
-        predefined_ingredients = load_predefined_ingredients("c:/Users/Anja/recipe_app/backend/ingredients.json")
+        predefined_ingredients = load_predefined_ingredients(INGREDIENTS_FILE_PATH)
         for ingredient in predefined_ingredients:
             # Check if the ingredient already exists in the database
             db_ingredient = db.query(Ingredient).filter(Ingredient.id == ingredient["id"]).first()
@@ -75,7 +82,7 @@ async def register_user(request: Request, user: UserCreate, db: Session = Depend
                     id=ingredient["id"],
                     name=ingredient["name"],
                     language=ingredient["language"],
-                    creator_id=new_user.id  # Associate with the new user
+                    creator_id=new_user.id
                 )
                 db.add(new_ingredient)
                 db.commit()
@@ -93,7 +100,6 @@ async def register_user(request: Request, user: UserCreate, db: Session = Depend
         # Create an access token
         access_token = create_access_token(data={"sub": new_user.email})
 
-        # Return the response with the access token
         return UserResponseWithToken(
             id=new_user.id,
             username=new_user.username,

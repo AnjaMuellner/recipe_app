@@ -5,19 +5,25 @@ import { useEffect, useState } from 'react';
 
 export default function IngredientsPage() {
   const { ingredients, deleteIngredient, deleteTranslation, isIngredientUsed } = useIngredients();
-  const [usedIngredients, setUsedIngredients] = useState({});
+  const [usedTranslations, setUsedTranslations] = useState({});
 
   useEffect(() => {
-    const checkUsedIngredients = async () => {
+    const checkUsedTranslations = async () => {
       const usedStatus = {};
       for (const ingredient of ingredients) {
-        usedStatus[ingredient.id] = await isIngredientUsed(ingredient.id);
+        if (ingredient.translations) {
+          for (const translation of ingredient.translations) {
+            // Check if the specific translation is used
+            const isUsed = await isIngredientUsed(translation.id);
+            usedStatus[translation.id] = isUsed;
+          }
+        }
       }
-      setUsedIngredients(usedStatus);
+      setUsedTranslations(usedStatus);
     };
 
     if (ingredients.length > 0) {
-      checkUsedIngredients();
+      checkUsedTranslations();
     }
   }, [ingredients]);
 
@@ -26,12 +32,14 @@ export default function IngredientsPage() {
       return ingredient.translations.map((translation) => (
         <div key={translation.id} className={styles.translationItem}>
           {translation.name} ({translation.language})
-          <button
-            className={styles.translationDeleteButton}
-            onClick={() => deleteTranslation(ingredient.id, translation.id)}
-          >
-            x
-          </button>
+          {usedTranslations[translation.id] === false && (
+            <button
+              className={styles.translationDeleteButton}
+              onClick={() => deleteTranslation(ingredient.id, translation.id)}
+            >
+              x
+            </button>
+          )}
         </div>
       ));
     }
@@ -57,7 +65,7 @@ export default function IngredientsPage() {
                 <div className={styles.ingredientTranslations}>
                   {getTranslations(ingredient)}
                 </div>
-                {!usedIngredients[ingredient.id] && (
+                {!usedTranslations[ingredient.id] && (
                   <button
                     className={styles.deleteButton}
                     onClick={() => deleteIngredient(ingredient.id)}

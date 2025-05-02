@@ -7,15 +7,15 @@ export default function RecipeDetails() {
   const router = useRouter();
   const { id } = router.query;
   const [recipe, setRecipe] = useState(null);
-  const [diameter, setDiameter] = useState(recipe?.servings?.diameter || 28); // Default to 28 cm
-  const [servings, setServings] = useState(recipe?.servings || 1); // Default to 1 for "number"
+  const [diameter, setDiameter] = useState(recipe?.servings?.diameter || 28);
+  const [servings, setServings] = useState(recipe?.servings || 1);
   const [trayDimensions, setTrayDimensions] = useState({
-    width: recipe?.servings?.width || 30, // Default width
-    length: recipe?.servings?.length || 20, // Default length
+    width: recipe?.servings?.width || 30,
+    length: recipe?.servings?.length || 20,
   });
 
   useEffect(() => {
-    if (!id) return; // Ensure `id` is available
+    if (!id) return;
 
     const fetchRecipe = async () => {
       const token = localStorage.getItem('token');
@@ -37,7 +37,7 @@ export default function RecipeDetails() {
         }
 
         const data = await response.json();
-        console.log('Fetched recipe:', data); // Debug log to inspect the recipe object
+        console.log('Fetched recipe:', data);
         setRecipe(data);
       } catch (error) {
         console.error('Error fetching recipe:', error);
@@ -60,7 +60,7 @@ export default function RecipeDetails() {
 
         if (response.ok) {
           alert('Recipe deleted successfully.');
-          router.push('/dashboard'); // Redirect to the dashboard after deletion
+          router.push('/dashboard');
         } else {
           const errorData = await response.json();
           alert(errorData.detail || 'Failed to delete recipe.');
@@ -79,21 +79,24 @@ export default function RecipeDetails() {
   const { prep_time, cook_time, rest_time, total_time, thumbnail_url, images_url, special_equipment } = recipe;
   const showTotalTime = (prep_time && cook_time) || (prep_time && rest_time) || (cook_time && rest_time);
 
-  console.log('Images URL:', images_url); // Debug log to check the images array
-  console.log('Thumbnail URL:', thumbnail_url); // Debug log to check the thumbnail URL
+  console.log('Images URL:', images_url);
+  console.log('Thumbnail URL:', thumbnail_url);
 
   const adjustIngredients = (ingredient) => {
+    let adjustedQuantity = ingredient.quantity;
+
     if (recipe.servings_unit.toLowerCase() === 'springform' && recipe.servings?.diameter) {
       const scaleFactor = (diameter / recipe.servings.diameter) ** 2; // Scale by area ratio
-      return (ingredient.quantity * scaleFactor).toFixed(2); // Adjust and round to 2 decimals
+      adjustedQuantity = ingredient.quantity * scaleFactor;
     } else if (recipe.servings_unit.toLowerCase() === 'number') {
       const scaleFactor = servings / recipe.servings; // Scale by number ratio
-      return (ingredient.quantity * scaleFactor).toFixed(2);
+      adjustedQuantity = ingredient.quantity * scaleFactor;
     } else if (recipe.servings_unit.toLowerCase() === 'baking tray' && recipe.servings?.width && recipe.servings?.length) {
       const scaleFactor = (trayDimensions.width * trayDimensions.length) / (recipe.servings.width * recipe.servings.length); // Scale by area ratio
-      return (ingredient.quantity * scaleFactor).toFixed(2);
+      adjustedQuantity = ingredient.quantity * scaleFactor;
     }
-    return ingredient.quantity; // No adjustment
+
+    return parseFloat(adjustedQuantity.toFixed(2));
   };
 
   return (
@@ -113,13 +116,13 @@ export default function RecipeDetails() {
           <img
             src={
               recipe.thumbnail_url
-                ? `${API_BASE_URL}${recipe.thumbnail_url}` // Prepend API_BASE_URL to the relative thumbnail URL
-                : '/default-recipe-image.jpg' // Fallback image
+                ? `${API_BASE_URL}${recipe.thumbnail_url}`
+                : '/default-recipe-image.jpg'
             }
             alt={`${recipe.title} Thumbnail`}
-            className={styles.thumbnail} // Apply thumbnail style
+            className={styles.thumbnail}
             onError={(e) => {
-              e.target.src = '/default-recipe-image.jpg'; // Fallback on error
+              e.target.src = '/default-recipe-image.jpg';
             }}
           />
         )}
@@ -130,7 +133,7 @@ export default function RecipeDetails() {
                 key={index}
                 src={url}
                 alt={`Image ${index + 1}`}
-                className={styles.image} // Apply image style
+                className={styles.image}
               />
             ))}
           </div>
@@ -144,7 +147,7 @@ export default function RecipeDetails() {
                   type="number"
                   value={servings}
                   onChange={(e) => setServings(Number(e.target.value))}
-                  className={styles.diameterInput} // Reuse the same input style
+                  className={styles.diameterInput}
                 />
               </>
             ) : recipe.servings_unit.toLowerCase() === 'baking tray' && recipe.servings?.width && recipe.servings?.length ? (
@@ -153,14 +156,14 @@ export default function RecipeDetails() {
                   type="number"
                   value={trayDimensions.width}
                   onChange={(e) => setTrayDimensions({ ...trayDimensions, width: Number(e.target.value) })}
-                  className={styles.diameterInput} // Reuse the same input style
+                  className={styles.diameterInput}
                 />
                 <span> x </span>
                 <input
                   type="number"
                   value={trayDimensions.length}
                   onChange={(e) => setTrayDimensions({ ...trayDimensions, length: Number(e.target.value) })}
-                  className={styles.diameterInput} // Reuse the same input style
+                  className={styles.diameterInput}
                 />
                 <span> cm Baking Tray</span>
               </>
@@ -170,7 +173,7 @@ export default function RecipeDetails() {
                   type="number"
                   value={diameter}
                   onChange={(e) => setDiameter(Number(e.target.value))}
-                  className={styles.diameterInput} // Reuse the same input style
+                  className={styles.diameterInput}
                 />
                 <span> cm ⌀ Springform</span>
               </>

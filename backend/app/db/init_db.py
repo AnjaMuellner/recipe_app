@@ -1,4 +1,3 @@
-from sqlalchemy import create_engine
 from backend.app.db.base_class import Base
 from backend.app.db.session import engine
 

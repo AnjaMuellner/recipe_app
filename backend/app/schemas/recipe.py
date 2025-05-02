@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List, Optional, TYPE_CHECKING, Union, Dict
+from typing import List, Optional, Union, Dict
 from datetime import datetime
 from fastapi import UploadFile, File
 from .category import Category
@@ -17,12 +17,12 @@ class Unit(str, Enum):
 class RecipeBase(BaseModel):
     title: str
     ingredients: List[IngredientResponse]
-    servings: Union[int, Dict[str, int]]  # Allow servings to be an integer or a dictionary
+    servings: Union[int, Dict[str, int]]
     servings_unit: Unit
-    special_equipment: List[str] = []  # Ensure it's always a list of strings
-    instructions: str  # JSON object from the frontend
+    special_equipment: List[str] = []
+    instructions: str
     thumbnail_url: Optional[str] = None
-    images_url: Optional[List[str]] = None  # Update to reflect a list of strings
+    images_url: Optional[List[str]] = None
     source: Optional[str] = None
     prep_time: Optional[int] = None
     cook_time: Optional[int] = None

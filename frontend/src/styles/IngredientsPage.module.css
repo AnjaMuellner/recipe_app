@@ -11,8 +11,8 @@
 
   .buttonWrapper {
     display: flex;
-    justify-content: center; /* Center the button horizontally */
-    margin-top: 20px; /* Add some spacing above the button */
+    justify-content: center;
+    margin-top: 20px;
   }
 
   .ingredientsList {
@@ -68,9 +68,9 @@
     border: none;
     color: #eb005e;
     cursor: pointer;
-    font-size: 14px; /* Smaller font size for the "x" */
-    padding: 0; /* Remove padding for a compact look */
-    line-height: 1; /* Ensure the "x" is vertically centered */
+    font-size: 14px;
+    padding: 0;
+    line-height: 1;
   }
   
   .deleteButton {

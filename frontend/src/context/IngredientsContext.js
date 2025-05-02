@@ -48,7 +48,7 @@ export const IngredientsProvider = ({ children }) => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        alert(errorData.detail); // Show error message to the user
+        alert(errorData.detail);
         return;
       }
 
@@ -68,7 +68,7 @@ export const IngredientsProvider = ({ children }) => {
     });
     if (response.ok) {
       const data = await response.json();
-      return data.length > 0; // Return true if the ingredient is used in any recipe
+      return data.length > 0;
     }
     console.error("Failed to check if ingredient is used:", response.statusText);
     return false;
@@ -85,7 +85,7 @@ export const IngredientsProvider = ({ children }) => {
         fetchIngredients,
         deleteIngredient,
         deleteTranslation,
-        isIngredientUsed, // Expose the new function
+        isIngredientUsed,
       }}
     >
       {children}

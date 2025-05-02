@@ -19,26 +19,26 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background: linear-gradient(135deg, #240d47, #792ff0); /* Gradient background */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-  transition: transform 0.2s, box-shadow 0.2s; /* Smooth hover effect */
+  background: linear-gradient(135deg, #240d47, #792ff0);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .recipeWidget:hover {
-  transform: translateY(-5px); /* Lift the widget slightly */
-  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+  transform: translateY(-5px);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
 }
 
 .recipeWidget img {
   width: 100%;
   height: 140px;
   object-fit: cover;
-  border-radius: 6px; /* Match widget's rounded corners */
-  margin-bottom: 10px; /* Add space below the image */
+  border-radius: 6px;
+  margin-bottom: 10px;
 }
 
 .recipeWidget h3 {
-  margin: 0 0 10px; /* Add margin below the title */
+  margin: 0 0 10px;
   color: white;
   font-size: 18px;
   white-space: nowrap;
@@ -48,17 +48,17 @@
 
 .recipeWidget .subtitle {
   font-size: 14px;
-  color: #bfbfbf; /* Subtle color for additional info */
+  color: #bfbfbf;
 }
 
 .recipeTitle {
-  text-decoration: none; /* Remove underline */
-  color: inherit; /* Ensure it inherits the text color */
+  text-decoration: none;
+  color: inherit;
 }
 
 .recipeLink {
-  text-decoration: none; /* Remove underline */
-  color: inherit; /* Ensure it inherits the text color */
+  text-decoration: none;
+  color: inherit;
 }
 
 .buttonWrapper {
@@ -68,9 +68,9 @@
 }
 
 .profileButton {
-  position: relative; /* Change from absolute to relative */
-  margin-left: auto; /* Push the button to the right */
-  align-self: center; /* Align with the heading */
+  position: relative;
+  margin-left: auto;
+  align-self: center;
   background-color: #5a00eb;
   color: white;
   border: none;

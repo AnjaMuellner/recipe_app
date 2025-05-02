@@ -4,9 +4,9 @@ from sqlalchemy.orm import Session, joinedload
 from typing import List
 
 from backend.app.models import Ingredient, IngredientTranslation, User, Recipe
-from backend.app.schemas import IngredientCreate, Ingredient as IngredientSchema, IngredientTranslationCreate, IngredientTranslation as IngredientTranslationSchema, IngredientResponse
+from backend.app.schemas import IngredientCreate, Ingredient as IngredientSchema, IngredientTranslationCreate, IngredientTranslation as IngredientTranslationSchema
 from backend.app.db import get_db
-from backend.app.utils import load_predefined_ingredients, get_current_user
+from backend.app.utils import get_current_user
 
 router = APIRouter()
 logger = logging.getLogger(__name__)

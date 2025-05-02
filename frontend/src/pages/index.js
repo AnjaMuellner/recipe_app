@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { API_BASE_URL } from '../config/apiConfig';
 
 export default function Home() {
   const [message, setMessage] = useState('');

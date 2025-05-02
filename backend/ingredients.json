@@ -1,29 +1,794 @@
 [
   {
     "id": 1,
-    "name": "Potato",
+    "name": "Flour",
     "language": "en",
     "translations": {
-      "de": "Kartoffel",
-      "fr": "Pomme de terre"
+      "de": "Mehl"
     }
   },
   {
     "id": 2,
-    "name": "Tomato",
+    "name": "Sugar",
     "language": "en",
     "translations": {
-      "es": "Tomate"
+      "de": "Zucker"
     }
   },
   {
     "id": 3,
+    "name": "Salt",
+    "language": "en",
+    "translations": {
+      "de": "Salz"
+    }
+  },
+  {
+    "id": 4,
+    "name": "Butter",
+    "language": "en",
+    "translations": {
+      "de": "Butter"
+    }
+  },
+  {
+    "id": 5,
+    "name": "Milk",
+    "language": "en",
+    "translations": {
+      "de": "Milch"
+    }
+  },
+  {
+    "id": 6,
+    "name": "Egg",
+    "language": "en",
+    "translations": {
+      "de": "Ei"
+    }
+  },
+  {
+    "id": 7,
+    "name": "Yeast",
+    "language": "en",
+    "translations": {
+      "de": "Hefe"
+    }
+  },
+  {
+    "id": 8,
+    "name": "Baking powder",
+    "language": "en",
+    "translations": {
+      "de": "Backpulver"
+    }
+  },
+  {
+    "id": 9,
+    "name": "Vanilla extract",
+    "language": "en",
+    "translations": {
+      "de": "Vanilleextrakt"
+    }
+  },
+  {
+    "id": 10,
+    "name": "Cinnamon",
+    "language": "en",
+    "translations": {
+      "de": "Zimt"
+    }
+  },
+  {
+    "id": 11,
+    "name": "Olive oil",
+    "language": "en",
+    "translations": {
+      "de": "Olivenöl"
+    }
+  },
+  {
+    "id": 12,
+    "name": "Vegetable oil",
+    "language": "en",
+    "translations": {
+      "de": "Pflanzenöl"
+    }
+  },
+  {
+    "id": 13,
+    "name": "Garlic",
+    "language": "en",
+    "translations": {
+      "de": "Knoblauch"
+    }
+  },
+  {
+    "id": 14,
+    "name": "Onion",
+    "language": "en",
+    "translations": {
+      "de": "Zwiebel"
+    }
+  },
+  {
+    "id": 15,
+    "name": "Tomato",
+    "language": "en",
+    "translations": {
+      "de": "Tomate"
+    }
+  },
+  {
+    "id": 16,
+    "name": "Potato",
+    "language": "en",
+    "translations": {
+      "de": "Kartoffel"
+    }
+  },
+  {
+    "id": 17,
     "name": "Carrot",
     "language": "en",
     "translations": {
-      "de": "Karotte",
-      "fr": "Carotte",
-      "es": "Zanahoria"
+      "de": "Karotte"
+    }
+  },
+  {
+    "id": 18,
+    "name": "Pepper",
+    "language": "en",
+    "translations": {
+      "de": "Pfeffer"
+    }
+  },
+  {
+    "id": 19,
+    "name": "Paprika",
+    "language": "en",
+    "translations": {
+      "de": "Paprika"
+    }
+  },
+  {
+    "id": 20,
+    "name": "Cream",
+    "language": "en",
+    "translations": {
+      "de": "Sahne"
+    }
+  },
+  {
+    "id": 21,
+    "name": "Cheese",
+    "language": "en",
+    "translations": {
+      "de": "Käse"
+    }
+  },
+  {
+    "id": 22,
+    "name": "Rice",
+    "language": "en",
+    "translations": {
+      "de": "Reis"
+    }
+  },
+  {
+    "id": 23,
+    "name": "Pasta",
+    "language": "en",
+    "translations": {
+      "de": "Nudeln"
+    }
+  },
+  {
+    "id": 24,
+    "name": "Bread crumbs",
+    "language": "en",
+    "translations": {
+      "de": "Paniermehl"
+    }
+  },
+  {
+    "id": 25,
+    "name": "Honey",
+    "language": "en",
+    "translations": {
+      "de": "Honig"
+    }
+  },
+  {
+    "id": 26,
+    "name": "Beef",
+    "language": "en",
+    "translations": {
+      "de": "Rindfleisch"
+    }
+  },
+  {
+    "id": 27,
+    "name": "Pork",
+    "language": "en",
+    "translations": {
+      "de": "Schweinefleisch"
+    }
+  },
+  {
+    "id": 28,
+    "name": "Chicken",
+    "language": "en",
+    "translations": {
+      "de": "Hähnchen"
+    }
+  },
+  {
+    "id": 29,
+    "name": "Fish",
+    "language": "en",
+    "translations": {
+      "de": "Fisch"
+    }
+  },
+  {
+    "id": 30,
+    "name": "Apple",
+    "language": "en",
+    "translations": {
+      "de": "Apfel"
+    }
+  },
+  {
+    "id": 31,
+    "name": "Banana",
+    "language": "en",
+    "translations": {
+      "de": "Banane"
+    }
+  },
+  {
+    "id": 32,
+    "name": "Orange",
+    "language": "en",
+    "translations": {
+      "de": "Orange"
+    }
+  },
+  {
+    "id": 33,
+    "name": "Lemon",
+    "language": "en",
+    "translations": {
+      "de": "Zitrone"
+    }
+  },
+  {
+    "id": 34,
+    "name": "Lime",
+    "language": "en",
+    "translations": {
+      "de": "Limette"
+    }
+  },
+  {
+    "id": 35,
+    "name": "Strawberry",
+    "language": "en",
+    "translations": {
+      "de": "Erdbeere"
+    }
+  },
+  {
+    "id": 36,
+    "name": "Raspberry",
+    "language": "en",
+    "translations": {
+      "de": "Himbeere"
+    }
+  },
+  {
+    "id": 37,
+    "name": "Blueberry",
+    "language": "en",
+    "translations": {
+      "de": "Blaubeere"
+    }
+  },
+  {
+    "id": 38,
+    "name": "Almond",
+    "language": "en",
+    "translations": {
+      "de": "Mandel"
+    }
+  },
+  {
+    "id": 39,
+    "name": "Hazelnut",
+    "language": "en",
+    "translations": {
+      "de": "Haselnuss"
+    }
+  },
+  {
+    "id": 40,
+    "name": "Walnut",
+    "language": "en",
+    "translations": {
+      "de": "Walnuss"
+    }
+  },
+  {
+    "id": 41,
+    "name": "Cashew",
+    "language": "en",
+    "translations": {
+      "de": "Cashewkern"
+    }
+  },
+  {
+    "id": 42,
+    "name": "Coconut",
+    "language": "en",
+    "translations": {
+      "de": "Kokosnuss"
+    }
+  },
+  {
+    "id": 43,
+    "name": "Nutmeg",
+    "language": "en",
+    "translations": {
+      "de": "Muskatnuss"
+    }
+  },
+  {
+    "id": 44,
+    "name": "Clove",
+    "language": "en",
+    "translations": {
+      "de": "Gewürznelke"
+    }
+  },
+  {
+    "id": 45,
+    "name": "Ginger",
+    "language": "en",
+    "translations": {
+      "de": "Ingwer"
+    }
+  },
+  {
+    "id": 46,
+    "name": "Coriander",
+    "language": "en",
+    "translations": {
+      "de": "Koriander"
+    }
+  },
+  {
+    "id": 47,
+    "name": "Cumin",
+    "language": "en",
+    "translations": {
+      "de": "Kreuzkümmel"
+    }
+  },
+  {
+    "id": 48,
+    "name": "Turmeric",
+    "language": "en",
+    "translations": {
+      "de": "Kurkuma"
+    }
+  },
+  {
+    "id": 49,
+    "name": "Bay leaf",
+    "language": "en",
+    "translations": {
+      "de": "Lorbeerblatt"
+    }
+  },
+  {
+    "id": 50,
+    "name": "Parsley",
+    "language": "en",
+    "translations": {
+      "de": "Petersilie"
+    }
+  },
+  {
+    "id": 51,
+    "name": "Lentils",
+    "language": "en",
+    "translations": {
+      "de": "Linsen"
+    }
+  },
+  {
+    "id": 52,
+    "name": "Chickpeas",
+    "language": "en",
+    "translations": {
+      "de": "Kichererbsen"
+    }
+  },
+  {
+    "id": 53,
+    "name": "Beans",
+    "language": "en",
+    "translations": {
+      "de": "Bohnen"
+    }
+  },
+  {
+    "id": 54,
+    "name": "Peas",
+    "language": "en",
+    "translations": {
+      "de": "Erbsen"
+    }
+  },
+  {
+    "id": 55,
+    "name": "Shrimp",
+    "language": "en",
+    "translations": {
+      "de": "Garnele"
+    }
+  },
+  {
+    "id": 56,
+    "name": "Mussel",
+    "language": "en",
+    "translations": {
+      "de": "Muschel"
+    }
+  },
+  {
+    "id": 57,
+    "name": "Squid",
+    "language": "en",
+    "translations": {
+      "de": "Tintenfisch"
+    }
+  },
+  {
+    "id": 58,
+    "name": "Salmon",
+    "language": "en",
+    "translations": {
+      "de": "Lachs"
+    }
+  },
+  {
+    "id": 59,
+    "name": "Tuna",
+    "language": "en",
+    "translations": {
+      "de": "Thunfisch"
+    }
+  },
+  {
+    "id": 60,
+    "name": "Oats",
+    "language": "en",
+    "translations": {
+      "de": "Haferflocken"
+    }
+  },
+  {
+    "id": 61,
+    "name": "Cornmeal",
+    "language": "en",
+    "translations": {
+      "de": "Maismehl"
+    }
+  },
+  {
+    "id": 62,
+    "name": "Semolina",
+    "language": "en",
+    "translations": {
+      "de": "Grieß"
+    }
+  },
+  {
+    "id": 63,
+    "name": "Barley",
+    "language": "en",
+    "translations": {
+      "de": "Gerste"
+    }
+  },
+  {
+    "id": 64,
+    "name": "Maple syrup",
+    "language": "en",
+    "translations": {
+      "de": "Ahornsirup"
+    }
+  },
+  {
+    "id": 65,
+    "name": "Molasses",
+    "language": "en",
+    "translations": {
+      "de": "Melasse"
+    }
+  },
+  {
+    "id": 66,
+    "name": "Agave syrup",
+    "language": "en",
+    "translations": {
+      "de": "Agavendicksaft"
+    }
+  },
+  {
+    "id": 67,
+    "name": "Stevia",
+    "language": "en",
+    "translations": {
+      "de": "Stevia"
+    }
+  },
+  {
+    "id": 68,
+    "name": "Corn starch",
+    "language": "en",
+    "translations": {
+      "de": "Maisstärke"
+    }
+  },
+  {
+    "id": 69,
+    "name": "Gelatin",
+    "language": "en",
+    "translations": {
+      "de": "Gelatine"
+    }
+  },
+  {
+    "id": 70,
+    "name": "Vanilla sugar",
+    "language": "en",
+    "translations": {
+      "de": "Vanillezucker"
+    }
+  },
+  {
+    "id": 71,
+    "name": "Oregano",
+    "language": "en",
+    "translations": {
+      "de": "Oregano"
+    }
+  },
+  {
+    "id": 72,
+    "name": "Thyme",
+    "language": "en",
+    "translations": {
+      "de": "Thymian"
+    }
+  },
+  {
+    "id": 73,
+    "name": "Rosemary",
+    "language": "en",
+    "translations": {
+      "de": "Rosmarin"
+    }
+  },
+  {
+    "id": 74,
+    "name": "Basil",
+    "language": "en",
+    "translations": {
+      "de": "Basilikum"
+    }
+  },
+  {
+    "id": 75,
+    "name": "Chili powder",
+    "language": "en",
+    "translations": {
+      "de": "Chilipulver"
+    }
+  },
+  {
+    "id": 76,
+    "name": "Soy sauce",
+    "language": "en",
+    "translations": {
+      "de": "Sojasauce"
+    }
+  },
+  {
+    "id": 77,
+    "name": "Rice vinegar",
+    "language": "en",
+    "translations": {
+      "de": "Reisessig"
+    }
+  },
+  {
+    "id": 78,
+    "name": "Balsamic vinegar",
+    "language": "en",
+    "translations": {
+      "de": "Balsamico-Essig"
+    }
+  },
+  {
+    "id": 79,
+    "name": "Apple cider vinegar",
+    "language": "en",
+    "translations": {
+      "de": "Apfelessig"
+    }
+  },
+  {
+    "id": 80,
+    "name": "Sunflower oil",
+    "language": "en",
+    "translations": {
+      "de": "Sonnenblumenöl"
+    }
+  },
+  {
+    "id": 81,
+    "name": "Canola oil",
+    "language": "en",
+    "translations": {
+      "de": "Rapsöl"
+    }
+  },
+  {
+    "id": 82,
+    "name": "Coconut oil",
+    "language": "en",
+    "translations": {
+      "de": "Kokosöl"
+    }
+  },
+  {
+    "id": 83,
+    "name": "Almond milk",
+    "language": "en",
+    "translations": {
+      "de": "Mandelmilch"
+    }
+  },
+  {
+    "id": 84,
+    "name": "Soy milk",
+    "language": "en",
+    "translations": {
+      "de": "Sojamilch"
+    }
+  },
+  {
+    "id": 85,
+    "name": "Oat milk",
+    "language": "en",
+    "translations": {
+      "de": "Hafermilch"
+    }
+  },
+  {
+    "id": 86,
+    "name": "Tofu",
+    "language": "en",
+    "translations": {
+      "de": "Tofu"
+    }
+  },
+  {
+    "id": 87,
+    "name": "Tempeh",
+    "language": "en",
+    "translations": {
+      "de": "Tempeh"
+    }
+  },
+  {
+    "id": 88,
+    "name": "Nutritional yeast",
+    "language": "en",
+    "translations": {
+      "de": "Nährhefe"
+    }
+  },
+  {
+    "id": 89,
+    "name": "Tahini",
+    "language": "en",
+    "translations": {
+      "de": "Tahini (Sesampaste)"
+    }
+  },
+  {
+    "id": 90,
+    "name": "Cocoa powder",
+    "language": "en",
+    "translations": {
+      "de": "Kakaopulver"
+    }
+  },
+  {
+    "id": 91,
+    "name": "Chocolate chips",
+    "language": "en",
+    "translations": {
+      "de": "Schokostückchen"
+    }
+  },
+  {
+    "id": 92,
+    "name": "Whipping cream",
+    "language": "en",
+    "translations": {
+      "de": "Schlagsahne"
+    }
+  },
+  {
+    "id": 93,
+    "name": "Sour cream",
+    "language": "en",
+    "translations": {
+      "de": "Saure Sahne"
+    }
+  },
+  {
+    "id": 94,
+    "name": "Crème fraîche",
+    "language": "en",
+    "translations": {
+      "de": "Crème fraîche"
+    }
+  },
+  {
+    "id": 95,
+    "name": "Ricotta",
+    "language": "en",
+    "translations": {
+      "de": "Ricotta"
+    }
+  },
+  {
+    "id": 96,
+    "name": "Feta cheese",
+    "language": "en",
+    "translations": {
+      "de": "Feta"
+    }
+  },
+  {
+    "id": 97,
+    "name": "Parmesan",
+    "language": "en",
+    "translations": {
+      "de": "Parmesan"
+    }
+  },
+  {
+    "id": 98,
+    "name": "Breadcrumbs",
+    "language": "en",
+    "translations": {
+      "de": "Semmelbrösel"
+    }
+  },
+  {
+    "id": 99,
+    "name": "Puff pastry",
+    "language": "en",
+    "translations": {
+      "de": "Blätterteig"
     }
   }
 ]

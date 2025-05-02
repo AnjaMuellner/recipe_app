@@ -41,7 +41,7 @@ class LogRequestMiddleware(BaseHTTPMiddleware):
             print("Incoming request with multipart/form-data")
         else:
             body = await request.body()
-            print("Incoming request data:", body.decode("utf-8", errors="replace"))  # Use 'replace' to avoid crashes
+            print("Incoming request data:", body.decode("utf-8", errors="replace"))
         response = await call_next(request)
         return response
 
@@ -49,7 +49,7 @@ class LogRequestMiddleware(BaseHTTPMiddleware):
 app.add_middleware(LogRequestMiddleware)
 
 # Mount the uploads directory as a static files route
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+app.mount("/uploads", StaticFiles(directory=os.getenv("UPLOADS_DIR")), name="uploads")
 
 @app.exception_handler(SQLAlchemyError)
 async def sqlalchemy_exception_handler(request, exc):

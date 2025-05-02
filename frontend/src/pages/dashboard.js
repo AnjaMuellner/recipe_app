@@ -17,7 +17,7 @@ export default function RecipesPage() {
         }
       });
       const data = await response.json();
-      console.log('Fetched recipes:', data); // Debug log to inspect fetched recipes
+      console.log('Fetched recipes:', data);
       setRecipes(Array.isArray(data) ? data : []);
     };
 
@@ -39,21 +39,21 @@ export default function RecipesPage() {
       </div>
       <div className={styles.recipeGrid}>
         {Array.isArray(recipes) && recipes.map((recipe) => {
-          console.log('Recipe thumbnail_url:', recipe.thumbnail_url); // Debug log for thumbnail_url
+          console.log('Recipe thumbnail_url:', recipe.thumbnail_url);
           return (
             <Link key={recipe.id} href={`/recipes/${recipe.id}`} className={styles.recipeLink}>
               <div className={styles.recipeWidget}>
                 <img
                   src={
                     recipe.thumbnail_url
-                      ? `${API_BASE_URL}${recipe.thumbnail_url}` // Prepend API_BASE_URL to the relative thumbnail URL
-                      : (recipe.images_url && recipe.images_url.length > 0 && recipe.images_url[0]) || // Use the first image if no thumbnail
-                        '/default-recipe-image.jpg' // Fallback image
+                      ? `${API_BASE_URL}${recipe.thumbnail_url}`
+                      : (recipe.images_url && recipe.images_url.length > 0 && recipe.images_url[0]) ||
+                        '/default-recipe-image.jpg'
                   }
                   alt={recipe.title}
                   onError={(e) => {
-                    console.error('Image failed to load:', e.target.src); // Debug log for failed image
-                    e.target.src = '/default-recipe-image.jpg'; // Fallback on error
+                    console.error('Image failed to load:', e.target.src);
+                    e.target.src = '/default-recipe-image.jpg';
                   }}
                 />
                 <h3 className={styles.recipeTitle}>{recipe.title}</h3>

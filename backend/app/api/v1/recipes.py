@@ -6,7 +6,7 @@ from typing import List, Optional
 
 from dotenv import load_dotenv
 from fastapi import APIRouter, Depends, status, UploadFile, File, Form, HTTPException
-from sqlalchemy.orm import Session, joinedload  # Add joinedload to the imports
+from sqlalchemy.orm import Session, joinedload
 
 load_dotenv()
 
@@ -32,10 +32,7 @@ def read_recipes(current_user: User = Depends(get_current_user), db: Session = D
             recipe_ingredients.select().where(recipe_ingredients.c.recipe_id == recipe.id)
         ).fetchall()
 
-        # Ensure servings_unit has a default value if None
         servings_unit = recipe.servings_unit or 'number'
-
-        # Transform instructions into a dictionary if it is a list
         instructions = {"steps": recipe.instructions} if isinstance(recipe.instructions, list) else recipe.instructions
 
         # Build the response data
@@ -50,8 +47,8 @@ def read_recipes(current_user: User = Depends(get_current_user), db: Session = D
             "cook_time": recipe.cook_time,
             "rest_time": recipe.rest_time,
             "total_time": recipe.total_time,
-            "thumbnail_url": recipe.thumbnail_url,  # Include thumbnail_url
-            "images_url": recipe.images_url or [],  # Include images_url as a list
+            "thumbnail_url": recipe.thumbnail_url,
+            "images_url": recipe.images_url or [],
             "ingredients": [
                 {
                     "name": db.query(Ingredient).get(ingredient.ingredient_id).name,
@@ -67,7 +64,7 @@ def read_recipes(current_user: User = Depends(get_current_user), db: Session = D
                 "id": current_user.id,
                 "username": current_user.username,
                 "email": current_user.email
-            }  # Set owner details to the currently logged-in user
+            }
         })
 
     return recipe_data
@@ -83,22 +80,21 @@ def get_recipe(recipe_id: int, current_user: User = Depends(get_current_user), d
         recipe_ingredients.select().where(recipe_ingredients.c.recipe_id == recipe.id)
     ).fetchall()
 
-    # Include the owner details in the response
     owner = db.query(User).filter(User.id == recipe.owner_id).first()
 
     return {
         "id": recipe.id,
         "title": recipe.title,
-        "servings": recipe.servings,  # Return servings as-is
+        "servings": recipe.servings,
         "servings_unit": recipe.servings_unit,
-        "special_equipment": recipe.special_equipment or [],  # Ensure it's always a list
+        "special_equipment": recipe.special_equipment or [],
         "instructions": recipe.instructions,
         "prep_time": recipe.prep_time,
         "cook_time": recipe.cook_time,
         "rest_time": recipe.rest_time,
         "total_time": recipe.total_time,
         "thumbnail_url": recipe.thumbnail_url,
-        "images_url": recipe.images_url or [],  # Ensure images_url is returned as a list
+        "images_url": recipe.images_url or [],
         "ingredients": [
             {
                 "name": db.query(Ingredient).get(ingredient.ingredient_id).name,
@@ -120,11 +116,11 @@ def get_recipe(recipe_id: int, current_user: User = Depends(get_current_user), d
 @router.post("/recipes", response_model=RecipeResponse, status_code=status.HTTP_201_CREATED)
 def create_recipe(
     title: str = Form(...),
-    ingredients: str = Form(...),  # JSON string with name, quantity, and unit
-    instructions: str = Form(...),  # Treat instructions as a plain string
-    servings: str = Form(...),  # Expect servings as a JSON string
+    ingredients: str = Form(...),
+    instructions: str = Form(...),
+    servings: str = Form(...),
     servings_unit: str = Form(None),
-    special_equipment: Optional[str] = Form(None),  # Expect a JSON string from the frontend
+    special_equipment: Optional[str] = Form(None),
     source: Optional[str] = Form(None),
     prep_time: Optional[int] = Form(None),
     cook_time: Optional[int] = Form(None),
@@ -156,7 +152,6 @@ def create_recipe(
     except json.JSONDecodeError:
         raise HTTPException(status_code=400, detail="Invalid JSON format in special_equipment")
 
-    # Ensure special_equipment is a list of strings and preserve the order
     special_equipment = [item.strip() for item in special_equipment if item.strip()]
 
     # Validate and fetch ingredients from the database
@@ -183,7 +178,6 @@ def create_recipe(
         for translation in ingredient.translations:
             db_ingredient_map[translation.name.strip().lower()] = ingredient
 
-    # Debugging: Log predefined ingredients and translations
     logger.info(f"Predefined ingredients and translations in database: {list(db_ingredient_map.keys())}")
 
     # Check for invalid ingredients
@@ -195,16 +189,15 @@ def create_recipe(
             detail=f"The following ingredients are not valid: {', '.join(invalid_ingredients)}"
         )
 
-    # Calculate total_time
     total_time = sum(filter(None, [prep_time, cook_time, rest_time]))
 
     # Create the recipe in the database
     db_recipe = RecipeModel(
         title=title,
         instructions=instructions,
-        servings=servings,  # Store servings as JSON
+        servings=servings,
         servings_unit=servings_unit,
-        special_equipment=special_equipment,  # Store as a JSON list
+        special_equipment=special_equipment,
         source=source,
         prep_time=prep_time,
         cook_time=cook_time,
@@ -227,7 +220,6 @@ def create_recipe(
             )
         )
 
-    # Ensure the uploads directory exists
     uploads_dir = "uploads"
 
     thumbnail_url = None
@@ -235,7 +227,7 @@ def create_recipe(
         thumbnail_path = os.path.join(uploads_dir, thumbnail.filename)
         with open(thumbnail_path, "wb") as f:
             shutil.copyfileobj(thumbnail.file, f)
-        thumbnail_url = f"/uploads/{thumbnail.filename}"  # Use relative path for the thumbnail URL
+        thumbnail_url = f"/uploads/{thumbnail.filename}"
     db_recipe.thumbnail_url = thumbnail_url
 
     image_urls = []

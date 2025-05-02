@@ -1,6 +1,6 @@
 from datetime import datetime
 import enum
-from sqlalchemy import CheckConstraint, Column, DateTime, Enum, Float, ForeignKey, Integer, String, Table, Text
+from sqlalchemy import CheckConstraint, Column, DateTime, Float, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import relationship
 from backend.app.db.base_class import Base
 from backend.app.models.user import cookbook_users
@@ -24,7 +24,7 @@ class CookbookRecipe(Base):
     id = Column(Integer, primary_key=True, index=True)
     recipe_id = Column(Integer, ForeignKey("recipes.id"), nullable=False)
     chapter_id = Column(Integer, ForeignKey("cookbook_chapters.id"), nullable=True)
-    position = Column(Integer, nullable=False)  #Position in Chapter
+    position = Column(Integer, nullable=False)  #Position in Cookbook
     cookbook_id = Column(Integer, ForeignKey("cookbooks.id"), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 

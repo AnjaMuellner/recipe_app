@@ -8,5 +8,5 @@ class Category(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(255), nullable=False, index=True)
 
-    from backend.app.models.recipe import recipe_categories  # Moved import here
+    from backend.app.models.recipe import recipe_categories
     recipes = relationship("Recipe", secondary=recipe_categories, back_populates="categories")
