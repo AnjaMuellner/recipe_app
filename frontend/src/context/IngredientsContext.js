@@ -10,15 +10,27 @@ export const IngredientsProvider = ({ children }) => {
 
   const fetchIngredients = async () => {
     const token = localStorage.getItem('token');
-    const response = await fetch(`${API_BASE_URL}/api/ingredients`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
-    const data = await response.json();
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/ingredients`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
 
-    // Ensure data is an array before setting it
-    setIngredients(Array.isArray(data) ? data : []);
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Failed to fetch ingredients:", errorData.detail || response.statusText);
+        if (response.status === 500) {
+          alert("Server error: Please check the backend logs.");
+        }
+        return;
+      }
+
+      const data = await response.json();
+      setIngredients(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Error fetching ingredients:", error.message);
+    }
   };
 
   const deleteIngredient = async (ingredientId) => {
@@ -74,6 +86,60 @@ export const IngredientsProvider = ({ children }) => {
     return false;
   };
 
+  const createIngredient = async (ingredientData) => {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/ingredients`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(ingredientData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        alert(errorData.detail);
+        return null;
+      }
+
+      const newIngredient = await response.json();
+      fetchIngredients(); // Refresh the ingredient list
+      return newIngredient;
+    } catch (error) {
+      console.error('Failed to create ingredient:', error);
+      return null;
+    }
+  };
+
+  const createTranslation = async (ingredientId, translationData) => {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/ingredients/${ingredientId}/translations`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(translationData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        alert(errorData.detail);
+        return null;
+      }
+
+      const newTranslation = await response.json();
+      fetchIngredients(); // Refresh the ingredient list
+      return newTranslation;
+    } catch (error) {
+      console.error('Failed to create translation:', error);
+      return null;
+    }
+  };
+
   useEffect(() => {
     fetchIngredients();
   }, []);
@@ -86,6 +152,8 @@ export const IngredientsProvider = ({ children }) => {
         deleteIngredient,
         deleteTranslation,
         isIngredientUsed,
+        createIngredient,
+        createTranslation,
       }}
     >
       {children}

@@ -3,10 +3,12 @@ import Link from 'next/link';
 import { useIngredients } from '../context/IngredientsContext';
 import { API_BASE_URL } from '../config/apiConfig';
 import styles from '../styles/dashboard.module.css';
+import { useRouter } from 'next/router';
 
 export default function RecipesPage() {
   const { predefinedIngredients, userIngredients } = useIngredients();
   const [recipes, setRecipes] = useState([]);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -24,16 +26,11 @@ export default function RecipesPage() {
     fetchRecipes();
   }, []);
 
-  const handleProfileClick = () => {
-    // Redirect to the profile page or show a dropdown
-    console.log('Profile button clicked');
-  };
-
   return (
     <div className={styles.container}>
       <div className={styles.header} style={{ display: 'flex', alignItems: 'center' }}>
         <h1 style={{ marginRight: 'auto' }}>Recipes</h1>
-        <button className={styles.profileButton} onClick={handleProfileClick}>
+        <button className={styles.profileButton} onClick={() => router.push('/profile')}>
           Profile
         </button>
       </div>
