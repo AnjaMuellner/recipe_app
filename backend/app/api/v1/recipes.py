@@ -5,7 +5,7 @@ import logging
 from typing import List, Optional
 
 from dotenv import load_dotenv
-from fastapi import APIRouter, Depends, status, UploadFile, File, Form, HTTPException
+from fastapi import APIRouter, Depends, status, UploadFile, File, Form, HTTPException, Query
 from sqlalchemy.orm import Session, joinedload
 
 load_dotenv()
@@ -261,3 +261,27 @@ def delete_recipe(recipe_id: int, db: Session = Depends(get_db), current_user: U
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail="Error deleting recipe")
+
+@router.get("/recipes/filter/by-ingredient")
+def get_recipes_by_ingredient(
+    ingredient_id: int = Query(..., description="The ID of the ingredient to filter recipes by"),
+    db: Session = Depends(get_db)
+):
+    try:
+        # Ensure ingredient_id is a valid integer
+        if not isinstance(ingredient_id, int) or ingredient_id <= 0:
+            raise HTTPException(status_code=422, detail="Invalid ingredient_id")
+
+        # Validate that the ingredient exists
+        ingredient = db.query(Ingredient).filter(Ingredient.id == ingredient_id).first()
+        if not ingredient:
+            raise HTTPException(status_code=404, detail="Ingredient not found")
+
+        # Fetch recipes that use the ingredient
+        recipes = db.query(RecipeModel).join(recipe_ingredients).filter(
+            recipe_ingredients.c.ingredient_id == ingredient_id
+        ).all()
+
+        return recipes
+    except Exception as e:
+        raise HTTPException(status_code=400, detail="Error processing request")

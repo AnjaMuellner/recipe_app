@@ -73,17 +73,32 @@ export const IngredientsProvider = ({ children }) => {
 
   const isIngredientUsed = async (ingredientId) => {
     const token = localStorage.getItem('token');
-    const response = await fetch(`${API_BASE_URL}/api/recipes?ingredient_id=${ingredientId}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
+    try {
+      // Parse and validate ingredientId
+      const parsedId = parseInt(ingredientId, 10);
+      if (isNaN(parsedId) || parsedId <= 0) {
+        console.error(`Invalid ingredientId: ${ingredientId}`);
+        return false;
       }
-    });
-    if (response.ok) {
-      const data = await response.json();
-      return data.length > 0;
+
+      const response = await fetch(`${API_BASE_URL}/api/recipes/filter/by-ingredient?ingredient_id=${parsedId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        return Array.isArray(data) && data.length > 0;
+      } else {
+        const errorText = await response.text();
+        console.error(`Failed to check if ingredient ${parsedId} is used:`, response.statusText, errorText);
+        return false;
+      }
+    } catch (error) {
+      console.error(`Error checking if ingredient ${ingredientId} is used:`, error);
+      return false;
     }
-    console.error("Failed to check if ingredient is used:", response.statusText);
-    return false;
   };
 
   const createIngredient = async (ingredientData) => {
@@ -140,6 +155,29 @@ export const IngredientsProvider = ({ children }) => {
     }
   };
 
+  const getRecipesByIngredient = async (ingredientId) => {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/recipes/by-ingredient?ingredient_id=${ingredientId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(`Recipes for ingredient ${ingredientId}:`, data); // Debug log
+        return data;
+      } else {
+        console.error("Failed to fetch recipes by ingredient:", response.statusText);
+        return [];
+      }
+    } catch (error) {
+      console.error("Error fetching recipes by ingredient:", error);
+      return [];
+    }
+  };
+
   useEffect(() => {
     fetchIngredients();
   }, []);
@@ -154,6 +192,7 @@ export const IngredientsProvider = ({ children }) => {
         isIngredientUsed,
         createIngredient,
         createTranslation,
+        getRecipesByIngredient, // Add this to the context
       }}
     >
       {children}

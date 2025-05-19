@@ -15,11 +15,15 @@ export default function IngredientsPage() {
     const checkUsedTranslations = async () => {
       const usedStatus = {};
       for (const ingredient of ingredients) {
+        // Check if the ingredient is used
+        const isUsed = await isIngredientUsed(ingredient.id);
+        usedStatus[ingredient.id] = isUsed;
+
+        // Check if each translation is used
         if (ingredient.translations) {
           for (const translation of ingredient.translations) {
-            // Check if the specific translation is used
-            const isUsed = await isIngredientUsed(translation.id);
-            usedStatus[translation.id] = isUsed;
+            const isTranslationUsed = await isIngredientUsed(translation.id);
+            usedStatus[translation.id] = isTranslationUsed;
           }
         }
       }
@@ -55,7 +59,7 @@ export default function IngredientsPage() {
       return ingredient.translations.map((translation) => (
         <div key={translation.id} className={styles.translationItem}>
           {translation.name} ({translation.language})
-          {usedTranslations[translation.id] === false && (
+          {!usedTranslations[translation.id] && (
             <button
               className={styles.translationDeleteButton}
               onClick={() => deleteTranslation(ingredient.id, translation.id)}
@@ -169,7 +173,11 @@ export default function IngredientsPage() {
                 {!usedTranslations[ingredient.id] && (
                   <button
                     className={styles.deleteButton}
-                    onClick={() => deleteIngredient(ingredient.id)}
+                    onClick={() => {
+                      if (window.confirm(`Are you sure you want to delete "${ingredient.name}"?`)) {
+                        deleteIngredient(ingredient.id);
+                      }
+                    }}
                   >
                     Delete Ingredient
                   </button>

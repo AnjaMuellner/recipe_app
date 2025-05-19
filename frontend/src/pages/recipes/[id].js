@@ -8,7 +8,7 @@ export default function RecipeDetails() {
   const { id } = router.query;
   const [recipe, setRecipe] = useState(null);
   const [diameter, setDiameter] = useState(recipe?.servings?.diameter || 28);
-  const [servings, setServings] = useState(recipe?.servings || 1);
+  const [servings, setServings] = useState(1); // Default to 1 initially
   const [trayDimensions, setTrayDimensions] = useState({
     width: recipe?.servings?.width || 30,
     length: recipe?.servings?.length || 20,
@@ -39,6 +39,7 @@ export default function RecipeDetails() {
         const data = await response.json();
         console.log('Fetched recipe:', data);
         setRecipe(data);
+        setServings(data.servings); // Set the servings from the fetched recipe
       } catch (error) {
         console.error('Error fetching recipe:', error);
       }

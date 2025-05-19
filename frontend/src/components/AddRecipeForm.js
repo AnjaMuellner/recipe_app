@@ -593,11 +593,14 @@ export default function AddRecipeForm() {
               required={isTranslation}
             >
               <option value="">Select Ingredient</option>
-              {ingredientList.map((ingredient) => (
-                <option key={ingredient.id} value={ingredient.id}>
-                  {ingredient.name}
-                </option>
-              ))}
+              {ingredientList
+                .slice()
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map((ingredient) => (
+                  <option key={ingredient.id} value={ingredient.id}>
+                    {ingredient.name}
+                  </option>
+                ))}
             </select>
             <label>
               <input
